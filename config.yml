@@ -1,2 +1,4 @@
-conf:
-  hello: world
+foo: hello
+bar:
+  - world
+  - "!"
