@@ -7,12 +7,17 @@ import(
 	"fmt"
 )
 
-type conf struct {
-	Foo string
-	Bar []string
+type ServerConf struct {
+	Server struct {
+		Git struct {
+			URI      string `json:"uri"`
+			Username string `json:"username"`
+			Password string `json:"password"`
+		} `json:"git"`
+	} `json:"server"`
 }
 
-func (c *conf) getConf() *conf {
+func (c *ServerConf) getConf() *ServerConf {
 	yamlFile, err := ioutil.ReadFile("config.yml")
 
 	if err != nil {
@@ -27,8 +32,8 @@ func (c *conf) getConf() *conf {
 }
 
 func main() {
-	var c conf
+	var c ServerConf
+	fmt.Println(c)
 	c.getConf()
-
 	fmt.Println(c)
 }

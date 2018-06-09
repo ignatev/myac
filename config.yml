@@ -1,4 +1,5 @@
-foo: hello
-bar:
-  - world
-  - "!"
+server:
+  git:
+    uri: https://github.com/spring-cloud-samples/config-repo
+    username: trolley
+    password: strongpassword
