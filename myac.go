@@ -37,3 +37,6 @@ func main() {
 	c.getConf()
 	fmt.Println(c)
 }
+
+//todo read configfile from server using git settings
+//todo display configfile via http
