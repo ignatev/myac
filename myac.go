@@ -8,6 +8,7 @@ import(
 	"gopkg.in/src-d/go-git.v4"
 	"os"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
+	"github.com/kataras/iris"
 )
 
 type ServerConf struct {
@@ -18,6 +19,12 @@ type ServerConf struct {
 			Password string `json:"password"`
 		} `json:"git"`
 	} `json:"server"`
+}
+
+func runServer() {
+	app := iris.New()
+	app.StaticWeb("/service-1", "./.filesystem-repo/service-1/generic-service.yml")
+	app.Run(iris.Addr(":8081"))
 }
 
 func (c *ServerConf) getConf() *ServerConf {
@@ -52,7 +59,9 @@ func main() {
 	if err1 != nil {
 		log.Println(err1)
 	}
+	runServer()
 }
 
-//todo read configfile from server using git settings
-//todo display configfile via http
+//todo create function for derivation web-server paths from git-repo structure, generate tree and run service using runServer() example
+//todo add Dockerfile
+//todo add tests
