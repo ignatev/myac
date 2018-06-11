@@ -6,6 +6,7 @@ import(
 	"log"
 	"fmt"
 	"gopkg.in/src-d/go-git.v4"
+	"os"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
 
@@ -37,14 +38,20 @@ func main() {
 	var c ServerConf
 	var url string = c.getConf().Server.Git.URI
 	fmt.Println(url)
-	r, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions {
+	_, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions {
 		URL: url,
 	})
 	if err != nil {
 		fmt.Println(err)
 	}
-ref, err := r.Head()
-fmt.Println(ref)
+
+	_, err1 := git.PlainClone(".filesystem-repo", false, &git.CloneOptions{
+		URL: url,
+		Progress: os.Stdout,
+	})
+	if err1 != nil {
+		log.Println(err1)
+	}
 }
 
 //todo read configfile from server using git settings
