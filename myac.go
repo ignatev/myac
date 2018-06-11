@@ -9,6 +9,7 @@ import(
 	"os"
 	"gopkg.in/src-d/go-git.v4/storage/memory"
 	"github.com/kataras/iris"
+	"path/filepath"
 )
 
 type ServerConf struct {
@@ -59,7 +60,20 @@ func main() {
 	if err1 != nil {
 		log.Println(err1)
 	}
+	repo, err := listRepo(".filesystem-repo")
+	fmt.Println(repo)
 	runServer()
+}
+
+func listRepo(pathToRepo string) ([]string, error) {
+	var files []string
+	err := filepath.Walk(pathToRepo, func(path string, info os.FileInfo, err error) error {
+		if !info.IsDir() {
+			files = append(files, path)
+		}
+		return nil
+	})
+	return files, err
 }
 
 //todo create function for derivation web-server paths from git-repo structure, generate tree and run service using runServer() example
