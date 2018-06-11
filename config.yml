@@ -1,5 +1,5 @@
 server:
   git:
-    uri: https://github.com/spring-cloud-samples/config-repo
+    uri: https://github.com/ignatev/myac-config.git
     username: trolley
     password: strongpassword

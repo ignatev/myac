@@ -5,6 +5,8 @@ import(
 	"io/ioutil"
 	"log"
 	"fmt"
+	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/src-d/go-git.v4/storage/memory"
 )
 
 type ServerConf struct {
@@ -33,9 +35,16 @@ func (c *ServerConf) getConf() *ServerConf {
 
 func main() {
 	var c ServerConf
-	fmt.Println(c)
-	c.getConf()
-	fmt.Println(c)
+	var url string = c.getConf().Server.Git.URI
+	fmt.Println(url)
+	r, err := git.Clone(memory.NewStorage(), nil, &git.CloneOptions {
+		URL: url,
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+ref, err := r.Head()
+fmt.Println(ref)
 }
 
 //todo read configfile from server using git settings
