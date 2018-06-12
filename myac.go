@@ -17,17 +17,17 @@ type ServerConf struct {
 	Server struct {
 		Port int `json:"port"`
 		Git struct {
-			URI                 string `json:"uri"`
+			URL                 string `json:"url"`
 			Username            string `json:"username"`
 			Password            string `json:"password"`
-			LocalRepositoryPath string `json:"local-repository-path"`
+			LocalRepositoryPath string  //todo investigate why yaml.v2 can not parse dashed props from yaml config: local-repository-path is nil
 		} `json:"git"`
 	} `json:"server"`
 }
 
 func runServer(port int, repo []string) {
 	app := iris.New()
-	app.StaticWeb("/service-1", "./.filesystem-repo/service-1/generic-service.yml")
+	app.StaticWeb("/service-1", "./.filesystem-repo/service-1/generic-service.yml") //todo see what can be done with this https://iris-go.com/v10/recipe#Dynamic%20Path163
 	app.Run(iris.Addr(":" + strconv.Itoa(port)))
 }
 
@@ -48,8 +48,10 @@ func (c *ServerConf) getConf() *ServerConf {
 func main() {
 	var c ServerConf
 	var config = c.getConf()
-	var url string = config.Server.Git.URI
+	var url string = config.Server.Git.URL
 	var localRepositoryPath string = config.Server.Git.LocalRepositoryPath
+	log.Println(config)
+	log.Println("repo path:", localRepositoryPath)
 	var port int = config.Server.Port
 
 	_, err1 := git.PlainClone(localRepositoryPath, false, &git.CloneOptions{
@@ -59,7 +61,7 @@ func main() {
 	if err1 != nil {
 		log.Println(err1)
 	}
-	repo, err := listRepo(".filesystem-repo")
+	repo, err := listRepo(localRepositoryPath)
 	if err != nil {
 		log.Println(err)
 	}

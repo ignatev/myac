@@ -1,7 +1,7 @@
 server:
   port: 8889
   git:
-    uri: https://github.com/ignatev/myac-config.git
+    url: https://github.com/ignatev/myac-config.git
     username: trolley
     password: strongpassword
-    local-repository-path: .filesystem-repo
+    localrepositorypath: .filesystem-repo
