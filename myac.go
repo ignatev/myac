@@ -1,6 +1,6 @@
 package main
 
-import(
+import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -10,22 +10,25 @@ import(
 	"github.com/kataras/iris"
 	"path/filepath"
 	"strings"
+	"strconv"
 )
 
 type ServerConf struct {
 	Server struct {
+		Port int `json:"port"`
 		Git struct {
-			URI      string `json:"uri"`
-			Username string `json:"username"`
-			Password string `json:"password"`
+			URI                 string `json:"uri"`
+			Username            string `json:"username"`
+			Password            string `json:"password"`
+			LocalRepositoryPath string `json:"local-repository-path"`
 		} `json:"git"`
 	} `json:"server"`
 }
 
-func runServer() {
+func runServer(port int, repo []string) {
 	app := iris.New()
 	app.StaticWeb("/service-1", "./.filesystem-repo/service-1/generic-service.yml")
-	app.Run(iris.Addr(":8081"))
+	app.Run(iris.Addr(":" + strconv.Itoa(port)))
 }
 
 func (c *ServerConf) getConf() *ServerConf {
@@ -44,12 +47,13 @@ func (c *ServerConf) getConf() *ServerConf {
 
 func main() {
 	var c ServerConf
-	var url string = c.getConf().Server.Git.URI
-	fmt.Println(url)
+	var config = c.getConf()
+	var url string = config.Server.Git.URI
+	var localRepositoryPath string = config.Server.Git.LocalRepositoryPath
+	var port int = config.Server.Port
 
-
-	_, err1 := git.PlainClone(".filesystem-repo", false, &git.CloneOptions{
-		URL: url,
+	_, err1 := git.PlainClone(localRepositoryPath, false, &git.CloneOptions{
+		URL:      url,
 		Progress: os.Stdout,
 	})
 	if err1 != nil {
@@ -59,14 +63,13 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-	fmt.Println(repo)
-	runServer()
+	runServer(port, repo)
 }
 
 func listRepo(root string) ([]string, error) {
 	var files []string
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() && !strings.HasPrefix(path, ".filesystem-repo/.git"){
+		if info.IsDir() && !strings.HasPrefix(path, ".filesystem-repo/.git") {
 			fmt.Println(path)
 			serviceURI := strings.TrimPrefix(path, ".filesystem-repo/")
 			files = append(files, serviceURI)
