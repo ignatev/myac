@@ -1,0 +1,8 @@
+FROM golang:alpine
+RUN apk update && apk upgrade && \
+    apk add --no-cache bash git openssh
+WORKDIR /src
+RUN go get -v github.com/golang/lint/golint
+RUN go get -v gopkg.in/yaml.v2
+RUN go get -v gopkg.in/src-d/go-git.v4/...
+RUN go get -v github.com/kataras/iris
