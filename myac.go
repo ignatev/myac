@@ -13,7 +13,7 @@ import (
 	"strconv"
 )
 
-type ServerConf struct {
+type serverConf struct {
 	Server struct {
 		Port int `json:"port"`
 		Git struct {
@@ -31,7 +31,7 @@ func runServer(port int, repo []string) {
 	app.Run(iris.Addr(":" + strconv.Itoa(port)))
 }
 
-func (c *ServerConf) getConf() *ServerConf {
+func (c *serverConf) getConf() *serverConf {
 	yamlFile, err := ioutil.ReadFile("config.yml")
 
 	if err != nil {
@@ -46,13 +46,13 @@ func (c *ServerConf) getConf() *ServerConf {
 }
 
 func main() {
-	var c ServerConf
+	var c serverConf
 	var config = c.getConf()
-	var url string = config.Server.Git.URL
-	var localRepositoryPath string = config.Server.Git.LocalRepositoryPath
+	url := config.Server.Git.URL
+	localRepositoryPath := config.Server.Git.LocalRepositoryPath
 	log.Println(config)
 	log.Println("repo path:", localRepositoryPath)
-	var port int = config.Server.Port
+	port := config.Server.Port
 
 	_, err1 := git.PlainClone(localRepositoryPath, false, &git.CloneOptions{
 		URL:      url,
