@@ -7,10 +7,9 @@ import (
 	"fmt"
 	"gopkg.in/src-d/go-git.v4"
 	"os"
-	"github.com/kataras/iris"
 	"path/filepath"
 	"strings"
-	"strconv"
+	"net/http"
 )
 
 type serverConf struct {
@@ -26,9 +25,12 @@ type serverConf struct {
 }
 
 func runServer(port int, repo []string) {
-	app := iris.New()
-	app.StaticWeb("/service-1", "./.filesystem-repo/service-1/generic-service.yml") //todo see what can be done with this https://iris-go.com/v10/recipe#Dynamic%20Path163
-	app.Run(iris.Addr(":" + strconv.Itoa(port)))
+	http.Handle("/.filesystem-repo/", http.StripPrefix("/.filesystem-repo/", http.FileServer(http.Dir(".filesystem-repo"))))
+
+	log.Println("Listening...")
+	if err := http.ListenAndServe(":8080", nil); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func (c *serverConf) getConf() *serverConf {
@@ -68,12 +70,14 @@ func main() {
 	runServer(port, repo)
 }
 
+
+
 func listRepo(root string) ([]string, error) {
 	var files []string
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-		if info.IsDir() && !strings.HasPrefix(path, ".filesystem-repo/.git") {
+		if !info.IsDir() && !strings.HasPrefix(path, root + "/.git") && path != root {
 			fmt.Println(path)
-			serviceURI := strings.TrimPrefix(path, ".filesystem-repo/")
+			serviceURI := strings.TrimPrefix(path, root)
 			files = append(files, serviceURI)
 		}
 		return nil
