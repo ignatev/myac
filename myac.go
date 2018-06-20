@@ -56,7 +56,7 @@ func main() {
 	log.Println("repo path:", localRepositoryPath)
 	port := config.Server.Port
 
-	_, err1 := git.PlainClone(localRepositoryPath, false, &git.CloneOptions{
+	_, err1 := git.PlainClone(localRepositoryPath, false, &git.CloneOptions {
 		URL:      url,
 		Progress: os.Stdout,
 	})
@@ -69,8 +69,6 @@ func main() {
 	}
 	runServer(port, repo)
 }
-
-
 
 func listRepo(root string) ([]string, error) {
 	var files []string
