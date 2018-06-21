@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"net/http"
+	"flag"
 )
 
 type serverConf struct {
@@ -33,8 +34,8 @@ func runServer(port int, repo []string) {
 	}
 }
 
-func (c *serverConf) getConf() *serverConf {
-	yamlFile, err := ioutil.ReadFile("config.yml")
+func (c *serverConf) getConf(configPath string) *serverConf {
+	yamlFile, err := ioutil.ReadFile(configPath)
 
 	if err != nil {
 		log.Printf("yamlFile.Get err #%v ", err)
@@ -48,8 +49,10 @@ func (c *serverConf) getConf() *serverConf {
 }
 
 func main() {
+	configPath := flag.String("config", "config.yml", "path to service config")
+	flag.Parse()
 	var c serverConf
-	var config = c.getConf()
+	var config = c.getConf(*configPath)
 	url := config.Server.Git.URL
 	localRepositoryPath := config.Server.Git.LocalRepositoryPath
 	log.Println(config)
