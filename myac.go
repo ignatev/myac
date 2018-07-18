@@ -11,6 +11,7 @@ import (
 	"strings"
 	"net/http"
 	"flag"
+//	"time"
 )
 
 type serverConf struct {
@@ -25,16 +26,30 @@ type serverConf struct {
 	} `json:"server"`
 }
 
+type configHandler struct {}
+
+func (ch *configHandler) ServeHTTP(w http.ResponseWriter, r * http.Request) {
+	log.Println(r.URL)
+}
 
 func runServer(port int, repo []string) {
 
+	// ch := configHandler{}
+	// s := &http.Server{
+	// 	Addr:			":9091",
+	// 	Handler:		ch,
+	// 	ReadTimetout:	10 * time.Second,
+	// 	WriteTimetout:	10 * time.Second,
+	// 	MaxHeaderBytes:	1 << 20,
+	// }
 
+	err := http.ListenAndServe(":9091", &configHandler{})
 
 //	http.Handle("/.filesystem-repo/", http.StripPrefix("/.filesystem-repo/", http.FileServer(http.Dir(".filesystem-repo"))))
 //	http.HandleFunc("/service-1", serveConfigFile)
 
 	log.Println("Listening...")
-	if err := http.ListenAndServe(":8080", nil); err != nil {
+	if err != nil {
 		log.Fatal(err)
 	}
 
