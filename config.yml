@@ -1,5 +1,5 @@
 server:
-  port: 8889
+  port: 8880
   git:
     url: https://github.com/ignatev/myac-config.git
     username: trolley
