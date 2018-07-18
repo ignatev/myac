@@ -25,14 +25,24 @@ type serverConf struct {
 	} `json:"server"`
 }
 
+
 func runServer(port int, repo []string) {
 
-	http.Handle("/.filesystem-repo/", http.StripPrefix("/.filesystem-repo/", http.FileServer(http.Dir(".filesystem-repo"))))
-	http.HandleFunc("/service-1", serveConfigFile)
+
+
+//	http.Handle("/.filesystem-repo/", http.StripPrefix("/.filesystem-repo/", http.FileServer(http.Dir(".filesystem-repo"))))
+//	http.HandleFunc("/service-1", serveConfigFile)
+
 	log.Println("Listening...")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}
+
+
+}
+
+func myTestHandler(w http.ResponseWriter, r *http.Request) {
+
 }
 
 func (c *serverConf) getConf(configPath string) *serverConf {
@@ -80,8 +90,8 @@ func listRepo(root string) ([]string, error) {
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() && !strings.HasPrefix(path, root + "/.git") && path != root {
 			fmt.Println(path)
-			serviceURI := strings.TrimPrefix(path, root)
-			files = append(files, serviceURI)
+//			serviceURI := strings.TrimPrefix(path, root)
+			files = append(files, path)
 		}
 		return nil
 	})
@@ -98,17 +108,19 @@ type configurationToServe struct {
 	URL			string
 }
 
-
 func createSliceWithPaths(paths []string) []configurationToServe {
 	var configs []configurationToServe
 	for _, p := range paths {
 		segs := strings.Split(p, "/")
+		log.Println(segs)
 		c := configurationToServe{p, segs[len(segs) -1 ], segs[len(segs) - 2]}
 		configs = append(configs, c)
 	}
 	log.Println(configs)
 	return configs
 }
+
+
 //todo create function for derivation web-server paths from git-repo structure, generate tree and run service using runServer() example
 //todo add Dockerfile
 //todo add tests
