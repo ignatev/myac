@@ -26,8 +26,9 @@ type serverConf struct {
 }
 
 func runServer(port int, repo []string) {
-	http.Handle("/.filesystem-repo/", http.StripPrefix("/.filesystem-repo/", http.FileServer(http.Dir(".filesystem-repo"))))
 
+	http.Handle("/.filesystem-repo/", http.StripPrefix("/.filesystem-repo/", http.FileServer(http.Dir(".filesystem-repo"))))
+	http.HandleFunc("/service-1", serveConfigFile)
 	log.Println("Listening...")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
@@ -59,17 +60,18 @@ func main() {
 	log.Println("repo path:", localRepositoryPath)
 	port := config.Server.Port
 
-	_, err1 := git.PlainClone(localRepositoryPath, false, &git.CloneOptions {
+	_, err := git.PlainClone(localRepositoryPath, false, &git.CloneOptions {
 		URL:      url,
 		Progress: os.Stdout,
 	})
-	if err1 != nil {
-		log.Println(err1)
+	if err != nil {
+		log.Println(err)
 	}
 	repo, err := listRepo(localRepositoryPath)
 	if err != nil {
 		log.Println(err)
 	}
+	createSliceWithPaths(repo)
 	runServer(port, repo)
 }
 
@@ -86,6 +88,27 @@ func listRepo(root string) ([]string, error) {
 	return files, err
 }
 
+func serveConfigFile(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, ".filesystem-repo/service-1/generic-service.yml")
+}
+
+type configurationToServe struct {
+	FilePath	string
+	FileName	string
+	URL			string
+}
+
+
+func createSliceWithPaths(paths []string) []configurationToServe {
+	var configs []configurationToServe
+	for _, p := range paths {
+		segs := strings.Split(p, "/")
+		c := configurationToServe{p, segs[len(segs) -1 ], segs[len(segs) - 2]}
+		configs = append(configs, c)
+	}
+	log.Println(configs)
+	return configs
+}
 //todo create function for derivation web-server paths from git-repo structure, generate tree and run service using runServer() example
 //todo add Dockerfile
 //todo add tests

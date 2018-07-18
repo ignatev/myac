@@ -1,5 +1,5 @@
 package main
 
-func readConfig() {
-	
+type server struct {
+
 }
