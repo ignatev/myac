@@ -87,7 +87,6 @@ func listRepo(root string) ([]string, error) {
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() && !strings.HasPrefix(path, root + "/.git") && path != root {
 			fmt.Println(path)
-//			serviceURI := strings.TrimPrefix(path, root)
 			files = append(files, path)
 		}
 		return nil
@@ -101,7 +100,7 @@ type configurationToServe struct {
 	URL			string
 }
 
-func createSliceWithPaths(paths []string) []configurationToServe {
+func createSliceWithPaths(paths []string) map[string] {
 	var configs []configurationToServe
 	for _, p := range paths {
 		segs := strings.Split(p, "/")
