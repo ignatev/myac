@@ -26,46 +26,28 @@ type serverConf struct {
 	} `json:"server"`
 }
 
-type configHandler struct {}
+type configHandler struct {
+	configs configurationToServe
+}
 
 func (ch *configHandler) ServeHTTP(w http.ResponseWriter, r * http.Request) {
 	log.Println(r.URL)
 }
 
 func runServer(port int, repo []string) {
-
-	// ch := configHandler{}
-	// s := &http.Server{
-	// 	Addr:			":9091",
-	// 	Handler:		ch,
-	// 	ReadTimetout:	10 * time.Second,
-	// 	WriteTimetout:	10 * time.Second,
-	// 	MaxHeaderBytes:	1 << 20,
-	// }
-
 	err := http.ListenAndServe(":9091", &configHandler{})
-
-//	http.Handle("/.filesystem-repo/", http.StripPrefix("/.filesystem-repo/", http.FileServer(http.Dir(".filesystem-repo"))))
-//	http.HandleFunc("/service-1", serveConfigFile)
-
 	log.Println("Listening...")
 	if err != nil {
 		log.Fatal(err)
 	}
-
-
-}
-
-func myTestHandler(w http.ResponseWriter, r *http.Request) {
-
 }
 
 func (c *serverConf) getConf(configPath string) *serverConf {
 	yamlFile, err := ioutil.ReadFile(configPath)
-
 	if err != nil {
 		log.Printf("yamlFile.Get err #%v ", err)
 	}
+
 	err = yaml.Unmarshal(yamlFile, &c)
 	if err != nil {
 		log.Fatalf("Unmarshal: %v", err)
@@ -111,10 +93,6 @@ func listRepo(root string) ([]string, error) {
 		return nil
 	})
 	return files, err
-}
-
-func serveConfigFile(w http.ResponseWriter, r *http.Request) {
-	http.ServeFile(w, r, ".filesystem-repo/service-1/generic-service.yml")
 }
 
 type configurationToServe struct {
