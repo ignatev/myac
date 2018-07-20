@@ -31,12 +31,24 @@ type configHandler struct {
 }
 
 func (ch *configHandler) ServeHTTP(w http.ResponseWriter, r * http.Request) {
-	log.Println(strings.TrimLeft(r.URL.Path, "/"))
+	p := strings.TrimLeft(r.URL.Path, "/")
+	log.Println(p)
+	c := ch.configs
+	log.Println(c)
+	if val, ok := c[p]; ok {
+		log.Println("serving file %s", val[0])
+		serveConfigFile(w, r, val[0])
+	}
+}
 	
+
+func serveConfigFile(w http.ResponseWriter, r *http.Request, p string) {
+	http.ServeFile(w, r, p)
 }
 
-func runServer(port int, repo []string) {
-	err := http.ListenAndServe(":9091", &configHandler{})
+
+func runServer(port int, configs map[string][]string) {
+	err := http.ListenAndServe(":9091", &configHandler{configs})
 	log.Println("Listening...")
 	if err != nil {
 		log.Fatal(err)
@@ -79,8 +91,8 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-	createSliceWithPaths(repo)
-	runServer(port, repo)
+	
+	runServer(port, createSliceWithPaths(repo))
 }
 
 func listRepo(root string) ([]string, error) {
