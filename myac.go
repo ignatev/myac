@@ -11,7 +11,6 @@ import (
 	"strings"
 	"net/http"
 	"flag"
-//	"time"
 )
 
 type serverConf struct {
@@ -32,11 +31,8 @@ type configHandler struct {
 
 func (ch *configHandler) ServeHTTP(w http.ResponseWriter, r * http.Request) {
 	p := strings.TrimLeft(r.URL.Path, "/")
-	log.Println(p)
 	c := ch.configs
-	log.Println(c)
 	if val, ok := c[p]; ok {
-		log.Println("serving file %s", val[0])
 		serveConfigFile(w, r, val[0])
 	}
 }
@@ -111,7 +107,6 @@ func createSliceWithPaths(paths []string) map[string][]string {
 	m := make(map[string][]string)
 	for _, p := range paths {
 		segs := strings.Split(p, "/")
-		log.Println(segs)
 		k := segs[len(segs) - 2]
 		m[k] = append(m[k], p)
 	}
