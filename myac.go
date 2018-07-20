@@ -27,11 +27,12 @@ type serverConf struct {
 }
 
 type configHandler struct {
-	configs configurationToServe
+	configs map[string][]string
 }
 
 func (ch *configHandler) ServeHTTP(w http.ResponseWriter, r * http.Request) {
-	log.Println(r.URL)
+	log.Println(strings.TrimLeft(r.URL.Path, "/"))
+	
 }
 
 func runServer(port int, repo []string) {
@@ -92,10 +93,6 @@ func listRepo(root string) ([]string, error) {
 		return nil
 	})
 	return files, err
-}
-
-type configurationToServe struct {
-	FilePath	string
 }
 
 func createSliceWithPaths(paths []string) map[string][]string {
