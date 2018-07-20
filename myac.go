@@ -120,6 +120,7 @@ func createSliceWithPaths(paths []string) map[string][]string {
 }
 
 
-//todo create function for derivation web-server paths from git-repo structure, generate tree and run service using runServer() example
+//todo add method for mapping service:[multiple config files, e.g. dev, prod, test]
+//todo organize logs
 //todo add Dockerfile
 //todo add tests
