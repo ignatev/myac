@@ -96,20 +96,18 @@ func listRepo(root string) ([]string, error) {
 
 type configurationToServe struct {
 	FilePath	string
-	FileName	string
-	URL			string
 }
 
-func createSliceWithPaths(paths []string) map[string] {
-	var configs []configurationToServe
+func createSliceWithPaths(paths []string) map[string][]string {
+	m := make(map[string][]string)
 	for _, p := range paths {
 		segs := strings.Split(p, "/")
 		log.Println(segs)
-		c := configurationToServe{p, segs[len(segs) -1 ], segs[len(segs) - 2]}
-		configs = append(configs, c)
+		k := segs[len(segs) - 2]
+		m[k] = append(m[k], p)
 	}
-	log.Println(configs)
-	return configs
+	log.Println(m)
+	return m
 }
 
 
