@@ -1,6 +1,7 @@
 package main
 
 import (
+	"strconv"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
@@ -43,8 +44,8 @@ func serveConfigFile(w http.ResponseWriter, r *http.Request, p string) {
 }
 
 
-func runServer(port int, configs map[string][]string) {
-	err := http.ListenAndServe(":9091", &configHandler{configs})
+func runServer(port string, configs map[string][]string) {
+	err := http.ListenAndServe(port, &configHandler{configs})
 	log.Println("Listening...")
 	if err != nil {
 		log.Fatal(err)
@@ -74,7 +75,7 @@ func main() {
 	localRepositoryPath := config.Server.Git.LocalRepositoryPath
 	log.Println(config)
 	log.Println("repo path:", localRepositoryPath)
-	port := config.Server.Port
+	port := ":" + strconv.Itoa(config.Server.Port)
 
 	_, err := git.PlainClone(localRepositoryPath, false, &git.CloneOptions {
 		URL:      url,
