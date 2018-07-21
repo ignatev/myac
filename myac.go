@@ -88,7 +88,7 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-	
+	printServerStatus(port, createSliceWithPaths(repo))
 	runServer(port, createSliceWithPaths(repo))
 }
 
@@ -115,6 +115,9 @@ func createSliceWithPaths(paths []string) map[string][]string {
 	return m
 }
 
+func printServerStatus(port string, configs map[string][]string){
+	fmt.Println("Service running on port", port)
+}
 
 //todo add method for mapping service:[multiple config files, e.g. dev, prod, test]
 //todo organize logs
