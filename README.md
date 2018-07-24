@@ -6,6 +6,7 @@ Myac is a configuration server inspired by Spring Cloud Config.
   - Generate URL for configs by folder name
 
 Example git repo with configuration to serve:
+
 ```
 │
 ├── service-1
