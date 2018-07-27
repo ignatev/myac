@@ -28,5 +28,5 @@ For this repo structure Myac will generate two URLs:
 ## ToDo
 
 * Return JSON instead of plain text
-* Create several URLs for folders with more than one config-file (service-1/dev, sevice-1/prod, etc.)
+* Create several URLs for folders with more than one config-file (service-1/dev, service-1/prod, etc.)
 * Write tests
