@@ -1,27 +1,28 @@
 package main
 
 import (
-	"strconv"
-	"gopkg.in/yaml.v2"
+	"flag"
+	"fmt"
 	"io/ioutil"
 	"log"
-	"fmt"
-	"gopkg.in/src-d/go-git.v4"
+	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
-	"net/http"
-	"flag"
+
+	"gopkg.in/src-d/go-git.v4"
+	"gopkg.in/yaml.v2"
 )
 
 type serverConf struct {
 	Server struct {
 		Port int `json:"port"`
-		Git struct {
+		Git  struct {
 			URL                 string `json:"url"`
 			Username            string `json:"username"`
 			Password            string `json:"password"`
-			LocalRepositoryPath string  //todo investigate why yaml.v2 can not parse dashed props from yaml config: local-repository-path is nil
+			LocalRepositoryPath string //todo investigate why yaml.v2 can not parse dashed props from yaml config: local-repository-path is nil
 		} `json:"git"`
 	} `json:"server"`
 }
@@ -30,19 +31,17 @@ type configHandler struct {
 	configs map[string][]string
 }
 
-func (ch *configHandler) ServeHTTP(w http.ResponseWriter, r * http.Request) {
+func (ch *configHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p := strings.TrimLeft(r.URL.Path, "/")
 	c := ch.configs
 	if val, ok := c[p]; ok {
 		serveConfigFile(w, r, val[0])
 	}
 }
-	
 
 func serveConfigFile(w http.ResponseWriter, r *http.Request, p string) {
 	http.ServeFile(w, r, p)
 }
-
 
 func runServer(port string, configs map[string][]string) {
 	err := http.ListenAndServe(port, &configHandler{configs})
@@ -77,7 +76,7 @@ func main() {
 	log.Println("repo path:", localRepositoryPath)
 	port := ":" + strconv.Itoa(config.Server.Port)
 
-	_, err := git.PlainClone(localRepositoryPath, false, &git.CloneOptions {
+	_, err := git.PlainClone(localRepositoryPath, false, &git.CloneOptions{
 		URL:      url,
 		Progress: os.Stdout,
 	})
@@ -95,7 +94,7 @@ func main() {
 func listRepo(root string) ([]string, error) {
 	var files []string
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-		if !info.IsDir() && !strings.HasPrefix(path, root + "/.git") && path != root {
+		if !info.IsDir() && !strings.HasPrefix(path, root+"/.git") && path != root {
 			fmt.Println(path)
 			files = append(files, path)
 		}
@@ -108,15 +107,20 @@ func createSliceWithPaths(paths []string) map[string][]string {
 	m := make(map[string][]string)
 	for _, p := range paths {
 		segs := strings.Split(p, "/")
-		k := segs[len(segs) - 2]
+		k := segs[len(segs)-2]
 		m[k] = append(m[k], p)
 	}
 	log.Println(m)
 	return m
 }
 
-func printServerStatus(port string, configs map[string][]string){
+func printServerStatus(port string, configs map[string][]string) {
 	fmt.Println("Service running on port", port)
+}
+
+//
+func collectEnvConfigs() {
+
 }
 
 //todo add method for mapping service:[multiple config files, e.g. dev, prod, test]
