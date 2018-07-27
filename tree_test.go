@@ -1,12 +1,22 @@
 package main
 
-import "testing"
+import (
+	"testing"
+	"fmt"
+)
 
 func TestTree(t *testing.T) {
-	got := tree("my_path")
-	want := "my_path"
-
-	if got != want {
-		t.Errorf("got '%s' want '%s'", got, want)
+	assertCorrectDirStructure := func(t *testing.T, got, want string) {
+		t.Helper()
+		if got != want {
+			fmt.Println(want)
+			t.Errorf("\ngot:\n%s \nwant:\n%s", got, want)
+		}
 	}
+
+	t.Run("one dir with one file", func(t *testing.T) {
+		got := tree(".filesystem-repo/service-1")
+		want := "service-1\n└── generic-service.yml"
+		assertCorrectDirStructure(t, got, want)
+	})
 }
