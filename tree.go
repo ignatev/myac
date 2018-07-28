@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
-	"os"
-	"path/filepath"
+//	"os"
+//	"path/filepath"
+	"io/ioutil"
+	"log"
 )
 
 //└ ─ │ ├
@@ -15,16 +17,27 @@ const (
 	lastItem     = "└── "
 )
 
-func tree(dir string) string {
-	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			fmt.Printf("Can't to access the path %q: %v\n", dir, err)
-			return err
-		}
-		return nil
-	})
+type configDirectory struct {
+	partentDirPath []string
+	filePaths      []string
+	dirPaths       []string
+}
+
+func tree(dir string) (string, error) {
+//	dirStructure := configDirectory{}
+	files, err := ioutil.ReadDir(dir)
 	if err != nil {
-		fmt.Printf("Error walkgin the path %q: %v\n", dir, err)
+		log.Fatal(err)
 	}
-	return ""
+	fmt.Println(files)
+	for _, file := range files {
+		fmt.Println(file.Name())
+		if file.IsDir() {
+			_, err := tree(file.Name())
+			if err != nil {
+				fmt.Println("error")
+			}
+		}
+	}
+	return "", nil
 }
