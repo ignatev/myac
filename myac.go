@@ -72,8 +72,8 @@ func main() {
 	var config = c.getConf(*configPath)
 	url := config.Server.Git.URL
 	localRepositoryPath := config.Server.Git.LocalRepositoryPath
-	log.Println(config)
-	log.Println("repo path:", localRepositoryPath)
+	//log.Println(config)
+	//log.Println("repo path:", localRepositoryPath)
 	port := ":" + strconv.Itoa(config.Server.Port)
 
 	_, err := git.PlainClone(localRepositoryPath, false, &git.CloneOptions{
@@ -98,7 +98,7 @@ func listRepo(root string) ([]string, error) {
 	var files []string
 	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() && !strings.HasPrefix(path, root+"/.git") && path != root {
-			fmt.Println(path)
+			//fmt.Println(path)
 			files = append(files, path)
 		}
 		return nil
@@ -113,7 +113,7 @@ func createSliceWithPaths(paths []string) map[string][]string {
 		k := segs[len(segs)-2]
 		m[k] = append(m[k], p)
 	}
-	log.Println(m)
+	//log.Println(m)
 	return m
 }
 

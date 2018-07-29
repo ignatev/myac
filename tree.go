@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
-//	"os"
-//	"path/filepath"
-	"io/ioutil"
-	"log"
+//	"io/ioutil"
+//	"log"
+	"os"
+	"path/filepath"
 )
 
 //└ ─ │ ├
@@ -18,26 +18,32 @@ const (
 )
 
 type configDirectory struct {
-	partentDirPath []string
+	currentDirPath string
+	partentDirPath string
 	filePaths      []string
 	dirPaths       []string
 }
 
 func tree(dir string) (string, error) {
-//	dirStructure := configDirectory{}
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(files)
-	for _, file := range files {
-		fmt.Println(file.Name())
-		if file.IsDir() {
-			_, err := tree(file.Name())
-			if err != nil {
-				fmt.Println("error")
-			}
+
+	var cds []configDirectory
+	err := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
+		var filePaths []string
+		var dirPaths []string
+		if f.IsDir() {
+			dirPaths = append(dirPaths, f.Name())
+			fmt.Println(dirPaths)
 		}
-	}
-	return "", nil
+		if !f.IsDir() {
+			filePaths = append(filePaths, f.Name())
+			fmt.Println(filePaths)
+		}
+		cd := configDirectory{dir, "", filePaths, dirPaths}
+		fmt.Println(cd)
+		cds = append(cds, cd)
+
+		return nil
+	})
+	fmt.Println(cds)
+	return "", err
 }
