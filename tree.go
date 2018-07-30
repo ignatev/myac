@@ -31,8 +31,8 @@ func tree(currentDir, parentDir string) (string, error) {
 		log.Fatal(err)
 	}
 
+	cd := configDirectory{}
 	for _, file := range files {
-		cd := configDirectory{}
 		if file.IsDir() {
 			cd.dirPaths = append(cd.dirPaths, file.Name())
 		} else {
@@ -40,9 +40,8 @@ func tree(currentDir, parentDir string) (string, error) {
 		}
 		cd.currentDirPath = currentDir
 		cd.parentDirPath = parentDir
-
-		printConfigDirectory(cd)
 	}
+	printConfigDirectory(cd)
 	return "", nil
 
 	/*
