@@ -84,7 +84,7 @@ func main() {
 		log.Println(err)
 	}
 	log.Println("tree start")
-	tree(localRepositoryPath)
+	tree(localRepositoryPath, "")
 	log.Println("tree end")
 	repo, err := listRepo(localRepositoryPath)
 	if err != nil {

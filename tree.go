@@ -19,21 +19,29 @@ const (
 
 type configDirectory struct {
 	currentDirPath string
-	partentDirPath string
+	parentDirPath string
 	filePaths      []string
 	dirPaths       []string
 }
 
-func tree(dir string) (string, error) {
-	
-	files, err := ioutil.ReadDir(dir)
+func tree(currentDir, parentDir string) (string, error) {
+
+	files, err := ioutil.ReadDir(currentDir)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, file := range files {
-		fmt.Println(file.Name())
-		fmt.Println(file.IsDir())
+		cd := configDirectory{}
+		if file.IsDir() {
+			cd.dirPaths = append(cd.dirPaths, file.Name())
+		} else {
+			cd.filePaths = append(cd.filePaths, file.Name())
+		}
+		cd.currentDirPath = currentDir
+		cd.parentDirPath = parentDir
+
+		printConfigDirectory(cd)
 	}
 	return "", nil
 
@@ -60,4 +68,19 @@ func tree(dir string) (string, error) {
 		return "", err
 	*/
 
+}
+
+func printConfigDirectory(cd configDirectory) {
+	fmt.Println("directories:")
+	for _, dir := range cd.dirPaths {
+		fmt.Println(dir)
+	}
+	fmt.Println("files:")
+	for _, file := range cd.filePaths {
+		fmt.Println(file)
+	}
+	fmt.Println("parentDir:", cd.parentDirPath)
+	fmt.Println("currentDir:", cd.currentDirPath)
+	fmt.Println("----")
+	fmt.Println()
 }
