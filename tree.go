@@ -16,40 +16,41 @@ const (
 )
 
 type configDirectory struct {
-	currentDirPath string
-	parentDirPath string
-	filePaths      []string
-	dirPaths       []string
+	currentDirPath	string
+	parentDir		*configDirectory
+	filePaths		[]string
+	dirPaths		[]configDirectory
 }
 
-func tree(currentDir, parentDir string) (string, error) {
-
-	files, err := ioutil.ReadDir(currentDir)
+func tree(currentDir configDirectory, parentDir string) (string, error) {
+	files, err := ioutil.ReadDir(currentDir.currentDirPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	cd := configDirectory{}
+	cd.currentDirPath = currentDir.currentDirPath
+
 	for _, file := range files {
 		if !file.IsDir() {
 			cd.filePaths = append(cd.filePaths, file.Name())
 		} 
 		if file.IsDir() && file.Name() != ".git" { //todo add exclude group into config
-			cd.dirPaths = append(cd.dirPaths, currentDir + "/" + file.Name())
+			innercd := configDirectory{}
+			innercd.currentDirPath = currentDir.currentDirPath + "/" + file.Name()
+			innercd.parentDir = &cd
+			cd.dirPaths = append(cd.dirPaths, innercd)
 		}
-		cd.currentDirPath = currentDir
-		cd.parentDirPath = parentDir
 	}
-	
 	printConfigDirectory(cd)
-	
 	for _, dir := range cd.dirPaths {
-		tree(dir, currentDir)
+		tree(dir, currentDir.currentDirPath)
 	}
 
 	return "", nil
 
 }
+
 
 func printConfigDirectory(cd configDirectory) {
 	fmt.Println("directories:")
@@ -60,7 +61,7 @@ func printConfigDirectory(cd configDirectory) {
 	for _, file := range cd.filePaths {
 		fmt.Println(file)
 	}
-	fmt.Println("parentDir:", cd.parentDirPath)
+	fmt.Println("parentDir:", cd.parentDir)
 	fmt.Println("currentDir:", cd.currentDirPath)
 	fmt.Println("----")
 	fmt.Println()
