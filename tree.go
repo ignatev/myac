@@ -31,15 +31,22 @@ func tree(currentDir, parentDir string) (string, error) {
 
 	cd := configDirectory{}
 	for _, file := range files {
-		if file.IsDir() {
-			cd.dirPaths = append(cd.dirPaths, file.Name())
-		} else {
+		if !file.IsDir() {
 			cd.filePaths = append(cd.filePaths, file.Name())
+		} 
+		if file.IsDir() && file.Name() != ".git" { //todo add exclude group into config
+			cd.dirPaths = append(cd.dirPaths, currentDir + "/" + file.Name())
 		}
 		cd.currentDirPath = currentDir
 		cd.parentDirPath = parentDir
 	}
+	
 	printConfigDirectory(cd)
+	
+	for _, dir := range cd.dirPaths {
+		tree(dir, currentDir)
+	}
+
 	return "", nil
 
 }
