@@ -65,17 +65,7 @@ func (c *serverConf) getConf(configPath string) *serverConf {
 	return c
 }
 
-func main() {
-	configPath := flag.String("config", "config.yml", "path to service config")
-	flag.Parse()
-	var c serverConf
-	var config = c.getConf(*configPath)
-	url := config.Server.Git.URL
-	localRepositoryPath := config.Server.Git.LocalRepositoryPath
-	//log.Println(config)
-	//log.Println("repo path:", localRepositoryPath)
-	port := ":" + strconv.Itoa(config.Server.Port)
-
+func cloneConfigRepo(localRepositoryPath, url string) {
 	_, err := git.PlainClone(localRepositoryPath, false, &git.CloneOptions{
 		URL:      url,
 		Progress: os.Stdout,
@@ -83,6 +73,20 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
+}
+
+func main() {
+	configPath := flag.String("config", "config.yml", "path to service config")
+	flag.Parse()
+	var c serverConf
+	config := c.getConf(*configPath)
+	url := config.Server.Git.URL
+	localRepositoryPath := config.Server.Git.LocalRepositoryPath
+	//log.Println(config)
+	//log.Println("repo path:", localRepositoryPath)
+	port := ":" + strconv.Itoa(config.Server.Port)
+
+	cloneConfigRepo(localRepositoryPath, url)
 
 	tree := tree(localRepositoryPath, nil)
 	fmt.Println(wipPrintDirWithTreeChars(&tree))

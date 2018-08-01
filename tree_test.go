@@ -2,9 +2,20 @@ package main
 
 import (
 	"testing"
+	//	"os"
+	//	"syscall"
 )
 
 func TestTree(t *testing.T) {
+	// assertDirIsNotExist := func (t *testing.T, path string) {
+	// 	t.Helper()
+	// 	_, err := os.Stat(path);
+	// 	err = underlyingError(err)
+	// 	if err == syscall.ENOENT || err == ErrNotExist {
+	// 		t.Errorf("%s already exists", path)
+	// 	}
+	// }
+
 	assertCorrectDirStructure := func(t *testing.T, got, want string) {
 		t.Helper()
 		if got != want {
@@ -18,7 +29,21 @@ func TestTree(t *testing.T) {
 		assertCorrectDirStructure(t, got, want)
 	})
 
+	t.Run("should clone given repo to local dir", func(t *testing.T) {
+
+		//TODO check that repo doesn't exist
+
+		var c serverConf
+		config := c.getConf("config.yml")
+		url := config.Server.Git.URL
+		localRepositoryPath := config.Server.Git.LocalRepositoryPath
+		cloneConfigRepo(localRepositoryPath, url)
+
+	})
+
 	t.Run("root dir should has empty parentDir", func(t *testing.T) {
+		cd := configDirectory{}
+		cd.currentDirPath = ".filesystem-repo/service-1"
 		tree := tree(".filesystem-repo/service-1", nil)
 		if tree.parentDir != nil {
 			t.Errorf("\ngot:\n%s \nwant:\nnil", tree.parentDir)
