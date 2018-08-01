@@ -44,12 +44,12 @@ func tree(currentDirPath string, parentDir configDirectory) (string, error) {
 			cd.dirs = append(cd.dirs, innercd)
 		}
 	}
-	//printConfigDirectory(cd)
-	
+	printConfigDirectory(cd)
+
 	for _, dir := range cd.dirs {
 		tree(dir.currentDirPath, cd)
 	}
-	wipCDPrint(cd)
+	//wipCDPrint(cd)
 
 	return "", nil
 
@@ -68,23 +68,10 @@ func printConfigDirectory(cd configDirectory) {
 		fmt.Println(file)
 	}
 	fmt.Print("\t")
-	fmt.Println(cd)
-	fmt.Println(cd.parentDir)
-	if cd.parentDir != nil {
-
-		fmt.Println("parentDir:", &cd.parentDir.currentDirPath)
-		fmt.Print("\t")
-	}
+	fmt.Println("parentDir:", cd.parentDir.currentDirPath)
+	fmt.Print("\t")
 	fmt.Println("currentDir:", cd.currentDirPath)
 	fmt.Println("----")
 	fmt.Println()
 }
 
-func wipCDPrint(cd configDirectory) {
-	fmt.Println("----")
-	fmt.Println("currentDir:", cd.currentDirPath)
-	fmt.Println("parentDir:", cd.parentDir.currentDirPath)
-	fmt.Println("filePaths:", cd.filePaths)
-	fmt.Println("dirPaths:", cd.dirs)
-	fmt.Println("----")
-}
