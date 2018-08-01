@@ -19,42 +19,37 @@ type configDirectory struct {
 	currentDirPath string
 	parentDir      *configDirectory
 	filePaths      []string
-	dirPaths       []configDirectory
+	dirs           []configDirectory
 }
 
-func tree(currentDir configDirectory, parentDir string) (string, error) {
-	fmt.Println("start currentDir for outer dir:")
-	fmt.Println(currentDir)
-	fmt.Println("end currentDir for outer dir:")
-	files, err := ioutil.ReadDir(currentDir.currentDirPath)
+func tree(currentDirPath string, parentDir configDirectory) (string, error) {
+	files, err := ioutil.ReadDir(currentDirPath)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	filePrefix := currentDir.currentDirPath + "/"
+	filePrefix := currentDirPath + "/"
 	cd := configDirectory{}
-	cd.currentDirPath = currentDir.currentDirPath
+	cd.currentDirPath = currentDirPath
+	cd.parentDir = &parentDir
 
 	for _, file := range files {
 		if !file.IsDir() {
-			cd.filePaths = append(cd.filePaths, filePrefix + file.Name())
+			cd.filePaths = append(cd.filePaths, filePrefix+file.Name())
 		}
 		if file.IsDir() && file.Name() != ".git" { //todo add exclude group into config
 			innercd := configDirectory{}
 			innercd.currentDirPath = filePrefix + file.Name()
-			fmt.Println("start currentDir for inner dir:")
-			fmt.Println(currentDir)
-			fmt.Println("end currentDir for inner dir:")
-			innercd.parentDir = &currentDir
-			fmt.Println(innercd.parentDir.currentDirPath)
-			cd.dirPaths = append(cd.dirPaths, innercd)
+			innercd.parentDir = &cd
+			cd.dirs = append(cd.dirs, innercd)
 		}
 	}
-	printConfigDirectory(cd)
-
-	for _, dir := range cd.dirPaths {
-		tree(dir, cd.currentDirPath)
+	//printConfigDirectory(cd)
+	
+	for _, dir := range cd.dirs {
+		tree(dir.currentDirPath, cd)
 	}
+	wipCDPrint(cd)
 
 	return "", nil
 
@@ -63,7 +58,7 @@ func tree(currentDir configDirectory, parentDir string) (string, error) {
 func printConfigDirectory(cd configDirectory) {
 	fmt.Println(cd.currentDirPath)
 	fmt.Println("\tdirectories:")
-	for _, dir := range cd.dirPaths {
+	for _, dir := range cd.dirs {
 		fmt.Print("\t")
 		fmt.Println(dir)
 	}
@@ -76,11 +71,20 @@ func printConfigDirectory(cd configDirectory) {
 	fmt.Println(cd)
 	fmt.Println(cd.parentDir)
 	if cd.parentDir != nil {
-		
+
 		fmt.Println("parentDir:", &cd.parentDir.currentDirPath)
 		fmt.Print("\t")
 	}
 	fmt.Println("currentDir:", cd.currentDirPath)
 	fmt.Println("----")
 	fmt.Println()
+}
+
+func wipCDPrint(cd configDirectory) {
+	fmt.Println("----")
+	fmt.Println("currentDir:", cd.currentDirPath)
+	fmt.Println("parentDir:", cd.parentDir.currentDirPath)
+	fmt.Println("filePaths:", cd.filePaths)
+	fmt.Println("dirPaths:", cd.dirs)
+	fmt.Println("----")
 }

@@ -83,13 +83,10 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-	log.Println("tree start")
+
 	cd := configDirectory{}
-	cd.currentDirPath = localRepositoryPath
-	cd.parentDir = nil
-	fmt.Println(cd)
-	tree(cd, "")
-	log.Println("tree end")
+	tree(localRepositoryPath, cd)
+
 	repo, err := listRepo(localRepositoryPath)
 	if err != nil {
 		log.Println(err)
