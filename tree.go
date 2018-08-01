@@ -22,7 +22,7 @@ type configDirectory struct {
 	dirs           []configDirectory
 }
 
-func tree(currentDirPath string, parentDir configDirectory) (string, error) {
+func tree(currentDirPath string, parentDir *configDirectory) configDirectory {
 	files, err := ioutil.ReadDir(currentDirPath)
 	if err != nil {
 		log.Fatal(err)
@@ -31,7 +31,7 @@ func tree(currentDirPath string, parentDir configDirectory) (string, error) {
 	filePrefix := currentDirPath + "/"
 	cd := configDirectory{}
 	cd.currentDirPath = currentDirPath
-	cd.parentDir = &parentDir
+	cd.parentDir = parentDir
 
 	for _, file := range files {
 		if !file.IsDir() {
@@ -44,15 +44,12 @@ func tree(currentDirPath string, parentDir configDirectory) (string, error) {
 			cd.dirs = append(cd.dirs, innercd)
 		}
 	}
-	printConfigDirectory(cd)
+	//printConfigDirectory(cd)
 
 	for _, dir := range cd.dirs {
-		tree(dir.currentDirPath, cd)
+		tree(dir.currentDirPath, &cd)
 	}
-	//wipCDPrint(cd)
-
-	return "", nil
-
+	return cd
 }
 
 func printConfigDirectory(cd configDirectory) {
@@ -68,10 +65,15 @@ func printConfigDirectory(cd configDirectory) {
 		fmt.Println(file)
 	}
 	fmt.Print("\t")
-	fmt.Println("parentDir:", cd.parentDir.currentDirPath)
-	fmt.Print("\t")
+	if cd.parentDir != nil {
+		fmt.Println("parentDir:", cd.parentDir.currentDirPath)
+		fmt.Print("\t")
+	}
 	fmt.Println("currentDir:", cd.currentDirPath)
 	fmt.Println("----")
 	fmt.Println()
 }
 
+func wipPrintDirWithTreeChars(cd configDirectory) {
+	fmt.Println("")
+}

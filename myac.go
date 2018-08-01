@@ -84,8 +84,8 @@ func main() {
 		log.Println(err)
 	}
 
-	cd := configDirectory{}
-	tree(localRepositoryPath, cd)
+	//cd := configDirectory{}
+	tree(localRepositoryPath, nil)
 
 	repo, err := listRepo(localRepositoryPath)
 	if err != nil {
