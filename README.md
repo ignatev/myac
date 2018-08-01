@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/ignatev/myac.svg?branch=master)](https://travis-ci.org/ignatev/myac)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/ac02cfb27fb04d6a84e0ccbceb232f53)](https://www.codacy.com/project/iskander.ignatev/myac/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ignatev/myac&amp;utm_campaign=Badge_Grade_Dashboard)
+[![Go Report Card](https://goreportcard.com/badge/github.com/ignatev/myac)](https://goreportcard.com/report/github.com/ignatev/myac)
 
 Myac is a configuration server inspired by Spring Cloud Config.
 
