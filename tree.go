@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strings"
 )
 
 //└ ─ │ ├
@@ -45,7 +46,6 @@ func tree(currentDirPath string, parentDir *configDirectory) configDirectory {
 		}
 	}
 	//printConfigDirectory(cd)
-
 	for _, dir := range cd.dirs {
 		tree(dir.currentDirPath, &cd)
 	}
@@ -75,5 +75,20 @@ func printConfigDirectory(cd configDirectory) {
 }
 
 func wipPrintDirWithTreeChars(cd *configDirectory) string {
-	return ""
+	result := cd.currentDirPath + "\n"
+	files := cd.filePaths
+	for i, file := range files {
+		file = fileName(file)
+		if i < len(files)-1 {
+			result += "├── " + file + "\n"
+		} else {
+			result += "└── " + file
+		}
+	}
+	return result
+}
+
+func fileName(fileName string) string {
+	segs := strings.Split(fileName, "/")
+	return segs[len(segs)-1]
 }
