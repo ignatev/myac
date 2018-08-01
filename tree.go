@@ -74,6 +74,6 @@ func printConfigDirectory(cd configDirectory) {
 	fmt.Println()
 }
 
-func wipPrintDirWithTreeChars(cd configDirectory) {
-	fmt.Println("")
+func wipPrintDirWithTreeChars(cd *configDirectory) string {
+	return ""
 }

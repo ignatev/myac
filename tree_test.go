@@ -15,8 +15,6 @@ func TestTree(t *testing.T) {
 	}
 
 	t.Run("one dir with one file", func(t *testing.T) {
-		//cd := configDirectory{}
-		//tree := tree(".filesystem-repo/service-1", cd)
 		got := "service-1\n└── generic-service.yml"
 		want := "service-1\n└── generic-service.yml"
 		assertCorrectDirStructure(t, got, want)
@@ -38,5 +36,12 @@ func TestTree(t *testing.T) {
 		assertCorrectDirStructure(t, got, want)
 	})
 
+	t.Run("print directory with one layer", func(t *testing.T) {
+		files := []string{"file-1", "file-2", "file-3"}
+		cd := configDirectory{"test", nil, files, nil}
+		got := wipPrintDirWithTreeChars(&cd)
+		want := "test\n├── file-1\n├── file-2\n└── file-3"
+		assertCorrectDirStructure(t, got, want)
+	})
 
 }
