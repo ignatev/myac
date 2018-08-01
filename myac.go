@@ -87,6 +87,7 @@ func main() {
 	cd := configDirectory{}
 	cd.currentDirPath = localRepositoryPath
 	cd.parentDir = nil
+	fmt.Println(cd)
 	tree(cd, "")
 	log.Println("tree end")
 	repo, err := listRepo(localRepositoryPath)
