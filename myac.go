@@ -88,13 +88,12 @@ func main() {
 
 	cloneConfigRepo(localRepositoryPath, url)
 
-	tree := tree(localRepositoryPath, nil)
-	fmt.Println(wipPrintDirWithTreeChars(&tree))
 
 	repo, err := listRepo(localRepositoryPath)
 	if err != nil {
 		log.Println(err)
 	}
+	buildTree(localRepositoryPath)
 	printServerStatus(port, createSliceWithPaths(repo))
 	runServer(port, createSliceWithPaths(repo))
 }
