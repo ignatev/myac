@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 )
 
@@ -21,6 +22,59 @@ type configDirectory struct {
 	parentDir      *configDirectory
 	filePaths      []string
 	dirs           []configDirectory
+}
+
+type config struct {
+	path      string
+	name      string
+	parentDir *config
+	subFiles  []*config
+	isDir     bool
+	padding   int
+}
+
+func tree2(file os.FileInfo, configs []config, parent config, padding int) {
+	fmt.Println("start tree2")
+	c := config{}
+	c.parentDir = &parent
+	c.path = parent.path + "/" + file.Name()
+	if parent.name != "" {
+		c.name = parent.name + "/" + file.Name()
+	} else {
+		c.name = file.Name()
+	}
+	//c.name = file.Name()
+	c.padding = padding
+	configs = append(configs, c)
+	parent.subFiles = append(parent.subFiles, &c)
+
+	if file.IsDir() && file.Name() != ".git" {
+		c.isDir = true
+
+		files, err := ioutil.ReadDir(c.name)
+		if err != nil {
+			log.Fatal(err)
+		} else {
+			for _, subfile := range files {
+				tree2(subfile, configs, c, padding+1)
+			}
+		}
+	} else {
+		c.isDir = false
+	}
+}
+
+func invokerTree2(path string) {
+	fileinfo, err := os.Stat(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var configs []config
+	c := config{}
+	c.name = ""
+	c.path = path
+	tree2(fileinfo, configs, c, 0)
+
 }
 
 func tree(currentDirPath string, parentDir *configDirectory) configDirectory {
@@ -50,6 +104,17 @@ func tree(currentDirPath string, parentDir *configDirectory) configDirectory {
 		tree(dir.currentDirPath, &cd)
 	}
 	return cd
+}
+
+func treeRefactor(dir string) {
+	files, err := ioutil.ReadDir(dir)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, file := range files {
+		fmt.Println(file.Name())
+	}
 }
 
 func printConfigDirectory(cd configDirectory) {
