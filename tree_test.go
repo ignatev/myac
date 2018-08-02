@@ -2,19 +2,18 @@ package main
 
 import (
 	"testing"
-	//	"os"
-	//	"syscall"
+	"os"
 )
 
 func TestTree(t *testing.T) {
-	// assertDirIsNotExist := func (t *testing.T, path string) {
-	// 	t.Helper()
-	// 	_, err := os.Stat(path);
-	// 	err = underlyingError(err)
-	// 	if err == syscall.ENOENT || err == ErrNotExist {
-	// 		t.Errorf("%s already exists", path)
-	// 	}
-	// }
+
+	assertDirIsNotExist := func(t *testing.T, path string) {
+		t.Helper()
+		_, err := os.Stat(path)
+		if !os.IsNotExist(err) {
+			t.Errorf("Repository already cloned or directory exists")
+		}
+	}
 
 	assertCorrectDirStructure := func(t *testing.T, got, want string) {
 		t.Helper()
@@ -22,23 +21,20 @@ func TestTree(t *testing.T) {
 			t.Errorf("\ngot:\n%s \nwant:\n%s", got, want)
 		}
 	}
-
+	
 	t.Run("one dir with one file", func(t *testing.T) {
 		got := "service-1\n└── generic-service.yml"
 		want := "service-1\n└── generic-service.yml"
 		assertCorrectDirStructure(t, got, want)
 	})
 
-	t.Run("should clone given repo to local dir", func(t *testing.T) {
-
-		//TODO check that repo doesn't exist
-
+	t.Run("should clone given repo to local dir", func(t *testing.T) {		
 		var c serverConf
 		config := c.getConf("config.yml")
 		url := config.Server.Git.URL
 		localRepositoryPath := config.Server.Git.LocalRepositoryPath
+		assertDirIsNotExist(t, localRepositoryPath)
 		cloneConfigRepo(localRepositoryPath, url)
-
 	})
 
 	t.Run("root dir should has empty parentDir", func(t *testing.T) {
