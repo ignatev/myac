@@ -76,21 +76,30 @@ func printConfigDirectory(cd configDirectory) {
 
 func wipPrintDirWithTreeChars(cd *configDirectory) string {
 	result := cd.currentDirPath + "\n"
+	dirs := cd.dirs
 	files := cd.filePaths
+	for i, dir := range dirs {
+		result = dirContent(result, dir.currentDirPath, i, len(dirs))
+	}
 	for i, file := range files {
-		file = fileName(file)
-		if i < len(files)-1 {
-			result += "├── " + file + "\n"
-		} else {
-			result += "└── " + file
-		}
+		result = dirContent(result, file, i, len(files))
 	}
 	return result
 }
 
-
+func dirContent(result, path string, i, l int) string {
+	p := fileName(path)
+	if i < l-1 {
+		result += "├── " + p + "\n"
+	} else {
+		result += "└── " + p + "\n"
+	}
+	return result
+}
 
 func fileName(fileName string) string {
 	segs := strings.Split(fileName, "/")
 	return segs[len(segs)-1]
 }
+
+

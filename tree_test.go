@@ -1,8 +1,8 @@
 package main
 
 import (
-	"testing"
 	"os"
+	"testing"
 )
 
 func TestTree(t *testing.T) {
@@ -21,14 +21,14 @@ func TestTree(t *testing.T) {
 			t.Errorf("\ngot:\n%s \nwant:\n%s", got, want)
 		}
 	}
-	
+
 	t.Run("one dir with one file", func(t *testing.T) {
 		got := "service-1\n└── generic-service.yml"
 		want := "service-1\n└── generic-service.yml"
 		assertCorrectDirStructure(t, got, want)
 	})
 
-	t.Run("should clone given repo to local dir", func(t *testing.T) {		
+	t.Run("should clone given repo to local dir", func(t *testing.T) {
 		var c serverConf
 		config := c.getConf("config.yml")
 		url := config.Server.Git.URL
