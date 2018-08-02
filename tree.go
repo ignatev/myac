@@ -101,5 +101,3 @@ func fileName(fileName string) string {
 	segs := strings.Split(fileName, "/")
 	return segs[len(segs)-1]
 }
-
-

@@ -59,7 +59,7 @@ func TestTree(t *testing.T) {
 		files := []string{"file-1", "file-2", "file-3"}
 		cd := configDirectory{"test", nil, files, nil}
 		got := wipPrintDirWithTreeChars(&cd)
-		want := "test\n├── file-1\n├── file-2\n└── file-3"
+		want := "test\n├── file-1\n├── file-2\n└── file-3\n"
 		assertCorrectDirStructure(t, got, want)
 	})
 
