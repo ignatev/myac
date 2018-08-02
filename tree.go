@@ -33,7 +33,7 @@ type config struct {
 	padding   int
 }
 
-func tree2(file os.FileInfo, configs []config, parent config, padding int) {
+func tree2(file os.FileInfo, configs []config, parent config, padding int, result string) {
 	fmt.Println("start tree2")
 	c := config{}
 	c.parentDir = &parent
@@ -43,12 +43,18 @@ func tree2(file os.FileInfo, configs []config, parent config, padding int) {
 	} else {
 		c.name = file.Name()
 	}
-	//c.name = file.Name()
 	c.padding = padding
 	configs = append(configs, c)
 	parent.subFiles = append(parent.subFiles, &c)
 
+	pad := ""
+	for p := 0; p < padding*2; p++ {
+		pad = pad + " "
+	}
+
 	if file.IsDir() && file.Name() != ".git" {
+		result = result + pad + file.Name() + "\n"
+		fmt.Print(result)
 		c.isDir = true
 
 		files, err := ioutil.ReadDir(c.name)
@@ -56,15 +62,17 @@ func tree2(file os.FileInfo, configs []config, parent config, padding int) {
 			log.Fatal(err)
 		} else {
 			for _, subfile := range files {
-				tree2(subfile, configs, c, padding+1)
+				tree2(subfile, configs, c, padding + 1, result)
 			}
 		}
 	} else {
+				result = result + pad + file.Name() + "\n"
+		fmt.Print(result)
 		c.isDir = false
 	}
 }
 
-func invokerTree2(path string) {
+func invokeTree2(path string) {
 	fileinfo, err := os.Stat(path)
 	if err != nil {
 		log.Fatal(err)
@@ -73,7 +81,7 @@ func invokerTree2(path string) {
 	c := config{}
 	c.name = ""
 	c.path = path
-	tree2(fileinfo, configs, c, 0)
+	tree2(fileinfo, configs, c, 0, path + "\n")
 
 }
 

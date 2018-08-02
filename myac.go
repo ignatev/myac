@@ -95,7 +95,7 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-	invokerTree2(localRepositoryPath)
+	invokeTree2(localRepositoryPath)
 	treeRefactor(localRepositoryPath)
 	printServerStatus(port, createSliceWithPaths(repo))
 	runServer(port, createSliceWithPaths(repo))
