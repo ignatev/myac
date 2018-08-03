@@ -7,7 +7,6 @@ before_install:
   - go get -u golang.org/x/lint/golint
   - go get -v gopkg.in/yaml.v2  
   - go get -v gopkg.in/src-d/go-git.v4/...
-  - go get -v github.com/kataras/iris
 
 script:
   - golint ./...
