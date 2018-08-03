@@ -10,7 +10,6 @@ type treenode struct {
 func treelines(tree treenode) {
 	var result []string
 	result = append(result, tree.name)
-	children = 
 }
 
 
