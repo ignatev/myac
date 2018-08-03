@@ -23,19 +23,19 @@ type config struct {
 	parentDir *config
 	subFiles  []*config
 	isDir     bool
-	padding   int
+	prefix    string
 }
 
-func tree(file os.FileInfo, configs *[]config, parent config, padding int) {
+func tree(file os.FileInfo, configs *[]config, parent config, prefix string) {
 	c := config{}
 	c.parentDir = &parent
-	c.name = file.Name()
+	c.name = prefix + file.Name()
 	if parent.path != "" {
 		c.path = parent.path + "/" + file.Name()
 	} else {
 		c.path = file.Name()
 	}
-	c.padding = padding
+	c.prefix = prefix
 	*configs = append(*configs, c)
 	parent.subFiles = append(parent.subFiles, &c)
 
@@ -45,10 +45,10 @@ func tree(file os.FileInfo, configs *[]config, parent config, padding int) {
 
 		files, err := ioutil.ReadDir(c.path)
 		if err != nil {
-			log.Fatal(err)
+			log.Println(err)
 		} else {
 			for _, subfile := range files {
-				tree(subfile, configs, c, padding+1)
+				tree(subfile, configs, c, "│   " + prefix)
 			}
 		}
 	} else {
@@ -65,13 +65,10 @@ func buildTree(path string) {
 	c := config{}
 	c.path = ""
 	c.name = path
-	tree(fileinfo, &configs, c, 0)
+	c.prefix = ""
+	tree(fileinfo, &configs, c, c.prefix)
 	for _, conf := range configs {
-		pad := ""
-		for p := 0; p < conf.padding*2; p++ {
-			pad = " " + pad
-		}
-		fmt.Println(pad + conf.name)
+		fmt.Println(conf.name)
 	}
 }
 
