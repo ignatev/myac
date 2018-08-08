@@ -13,7 +13,7 @@ Example git repo with configuration to serve:
 
 ```bash
 
-│
+repo
 ├── service-1
 │   └── generic-service.yml
 └── service-2
