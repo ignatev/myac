@@ -98,3 +98,48 @@ func fileName(fileName string) string {
 	segs := strings.Split(fileName, "/")
 	return segs[len(segs)-1]
 }
+
+type dirtree struct {
+	path, name	string
+	children	[]*dirtree
+	parent		*dirtree
+	isDir		bool
+}
+
+func fillTree(root string, parent *dirtree, isDir bool) dirtree {
+	var current dirtree
+	var children []*dirtree
+	current.path = parent.path + "/" + root
+	current.name = root
+	current.parent = parent
+	current.isDir = isDir
+
+	if isDir {
+		dir, err := ioutil.ReadDir(root)
+		if err != nil {
+			// log
+		}
+		for _, file := range dir {
+			if file.IsDir() {
+				child := fillTree(file.Name(), &current, true)
+				children = append(children, &child)
+			}
+		}
+	}
+	current.children = children
+	return current
+}
+
+func runFillTree(root string) {
+	var rootDir dirtree
+	rootDir.path = ""
+	rootDir.name = root
+	dir, err := os.Stat(root)
+	if err != nil {
+		// log
+	}
+	if dir.IsDir() {
+		result := fillTree(root, &rootDir, true)
+		fmt.Println(result)
+	}
+}

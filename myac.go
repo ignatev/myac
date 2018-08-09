@@ -88,7 +88,9 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-	buildTree(localRepositoryPath)
+	//buildTree(localRepositoryPath)
+
+	runFillTree(localRepositoryPath)
 	printServerStatus(port, createSliceWithPaths(repo))
 	runServer(port, createSliceWithPaths(repo))
 }
