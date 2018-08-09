@@ -82,13 +82,8 @@ func main() {
 	config := c.getConf(*configPath)
 	url := config.Server.Git.URL
 	localRepositoryPath := config.Server.Git.LocalRepositoryPath
-	//log.Println(config)
-	//log.Println("repo path:", localRepositoryPath)
 	port := ":" + strconv.Itoa(config.Server.Port)
-
 	cloneConfigRepo(localRepositoryPath, url)
-
-
 	repo, err := listRepo(localRepositoryPath)
 	if err != nil {
 		log.Println(err)
@@ -116,7 +111,6 @@ func createSliceWithPaths(paths []string) map[string][]string {
 		k := segs[len(segs)-2]
 		m[k] = append(m[k], p)
 	}
-	//log.Println(m)
 	return m
 }
 
