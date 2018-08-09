@@ -101,64 +101,66 @@ type dirtree struct {
 	path, name string
 	children   []*dirtree
 	parent     *dirtree
-	isDir      bool
 }
 
-func fillTree(root string, parent *dirtree, isDir bool) *dirtree {
+func fillTree(path string, parent *dirtree) *dirtree {
 	var current dirtree
 	var children []*dirtree
-	//	current.path = parent.path + "/" + root
-	current.name = root
+	current.name = path
 	current.parent = parent
-	current.isDir = isDir
+	current.path = parent.path + "/" + path
+//	fmt.Println("current path:", current.path)
 
-	if parent.path != "" {
-		current.path = parent.path + "/" + root
-	} else {
-		current.path = root
+	fileinfo, err := os.Stat(current.path)
+	if err != nil {
+		fmt.Println(err)
 	}
+	if fileinfo.IsDir() && fileinfo.Name() != ".git" {
 
-	if isDir {
-		dir, err := ioutil.ReadDir(root)
-		if err != nil {
-			// log
-		}
-		for _, file := range dir {
-			if file.IsDir() {
-				fmt.Println(file.Name())
-				child := fillTree(current.path+"/"+file.Name(), &current, true)
-				children = append(children, child)
-			} else {
-				child := fillTree(current.path+"/"+file.Name(), &current, false)
-				children = append(children, child)
-			}
-		}
+	dir, err := ioutil.ReadDir(current.path)
+	if err != nil {
+//		fmt.Println(err)
+	}
+	for _, file := range dir {
+		child := fillTree(file.Name(), &current)
+		children = append(children, child)
 	}
 	current.children = children
-
+	}
 	return &current
 }
 
 func runFillTree(root string) {
 	var rootDir dirtree
-	rootDir.path = ""
-	rootDir.name = ""
-	dir, err := os.Stat(root)
+	rootDir.path = root
+	rootDir.name = root
+	var children []*dirtree
+	rootDir.children = children
+	dir, err := ioutil.ReadDir(root)
 	if err != nil {
-		// log
+
 	}
-	if dir.IsDir() {
-		result := fillTree(root, &rootDir, true)
-		renderTree(result)
+	for _, d := range dir {
+		fillTree(d.Name(), &rootDir)
+	}
+	printtree(&rootDir)
+
+}
+
+func printtree(tree *dirtree) {
+	fmt.Println(tree.name)
+	if len(tree.children) != 0 {
+		for _, tree := range tree.children {
+			printtree(tree)
+		}
 	}
 }
 
 func renderTree(tree *dirtree) []string {
 	var result []string
-	//	result = append(result, tree.name)
-
+	result = append(result, tree.name)
 	for i, child := range tree.children {
-		result = append(result, renderTree(child)...)
+//		result = append(result, renderTree(child)...)
 		if i == len(tree.children)-1 {
 			result = append(result, lastsubtree(child)...)
 		} else {
