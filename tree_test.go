@@ -37,7 +37,7 @@ func TestTree(t *testing.T) {
 		cloneConfigRepo(localRepositoryPath, url)
 	})
 
-/* 	t.Run("root dir should has empty parentDir", func(t *testing.T) {
+	/* 	t.Run("root dir should has empty parentDir", func(t *testing.T) {
 		cd := config{}
 		cd.path = ".filesystem-repo/service-1"
 		tree := buildTree(".filesystem-repo/service-1")
@@ -46,7 +46,7 @@ func TestTree(t *testing.T) {
 		}
 	}) */
 
-/* 	t.Run("non-root dir should has parentDir", func(t *testing.T) {
+	/* 	t.Run("non-root dir should has parentDir", func(t *testing.T) {
 		cd := configDirectory{}
 		cd.currentDirPath = "I'am parent"
 		tree := tree(".filesystem-repo/service-1", &cd)
@@ -55,7 +55,7 @@ func TestTree(t *testing.T) {
 		assertCorrectDirStructure(t, got, want)
 	}) */
 
-/* 	t.Run("print directory with one layer", func(t *testing.T) {
+	/* 	t.Run("print directory with one layer", func(t *testing.T) {
 		files := []string{"file-1", "file-2", "file-3"}
 		cd := configDirectory{"test", nil, files, nil}
 		got := wipPrintDirWithTreeChars(&cd)

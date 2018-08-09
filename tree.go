@@ -39,7 +39,6 @@ func tree(file os.FileInfo, configs *[]config, parent config, prefix string) {
 	*configs = append(*configs, c)
 	parent.subFiles = append(parent.subFiles, &c)
 
-
 	if file.IsDir() && file.Name() != ".git" {
 		c.isDir = true
 
@@ -48,7 +47,7 @@ func tree(file os.FileInfo, configs *[]config, parent config, prefix string) {
 			log.Println(err)
 		} else {
 			for _, subfile := range files {
-				tree(subfile, configs, c, "│   " + prefix)
+				tree(subfile, configs, c, "│   "+prefix)
 			}
 		}
 	} else {
@@ -83,7 +82,6 @@ func treeRefactor(dir string) {
 	}
 }
 
-
 func dirContent(result, path string, i, l int) string {
 	p := fileName(path)
 	if i < l-1 {
@@ -100,19 +98,25 @@ func fileName(fileName string) string {
 }
 
 type dirtree struct {
-	path, name	string
-	children	[]*dirtree
-	parent		*dirtree
-	isDir		bool
+	path, name string
+	children   []*dirtree
+	parent     *dirtree
+	isDir      bool
 }
 
-func fillTree(root string, parent *dirtree, isDir bool) dirtree {
+func fillTree(root string, parent *dirtree, isDir bool) *dirtree {
 	var current dirtree
 	var children []*dirtree
-	current.path = parent.path + "/" + root
+	//	current.path = parent.path + "/" + root
 	current.name = root
 	current.parent = parent
 	current.isDir = isDir
+
+	if parent.path != "" {
+		current.path = parent.path + "/" + root
+	} else {
+		current.path = root
+	}
 
 	if isDir {
 		dir, err := ioutil.ReadDir(root)
@@ -121,25 +125,66 @@ func fillTree(root string, parent *dirtree, isDir bool) dirtree {
 		}
 		for _, file := range dir {
 			if file.IsDir() {
-				child := fillTree(file.Name(), &current, true)
-				children = append(children, &child)
+				fmt.Println(file.Name())
+				child := fillTree(current.path+"/"+file.Name(), &current, true)
+				children = append(children, child)
+			} else {
+				child := fillTree(current.path+"/"+file.Name(), &current, false)
+				children = append(children, child)
 			}
 		}
 	}
 	current.children = children
-	return current
+
+	return &current
 }
 
 func runFillTree(root string) {
 	var rootDir dirtree
 	rootDir.path = ""
-	rootDir.name = root
+	rootDir.name = ""
 	dir, err := os.Stat(root)
 	if err != nil {
 		// log
 	}
 	if dir.IsDir() {
 		result := fillTree(root, &rootDir, true)
-		fmt.Println(result)
+		renderTree(result)
 	}
+}
+
+func renderTree(tree *dirtree) []string {
+	var result []string
+	//	result = append(result, tree.name)
+
+	for i, child := range tree.children {
+		result = append(result, renderTree(child)...)
+		if i == len(tree.children)-1 {
+			result = append(result, lastsubtree(child)...)
+		} else {
+			result = append(result, subtree(child)...)
+		}
+	}
+	for _, p := range result {
+		fmt.Println(p)
+	}
+	return result
+}
+
+func subtree(subtree *dirtree) []string {
+	var result []string
+	result = append(result, middleItem+subtree.name)
+	for _, child := range subtree.children {
+		result = append(result, continueItem+child.name)
+	}
+	return result
+}
+
+func lastsubtree(subtree *dirtree) []string {
+	var result []string
+	result = append(result, lastItem+subtree.name)
+	for _, child := range subtree.children {
+		result = append(result, emptySpace+child.name)
+	}
+	return result
 }
