@@ -108,7 +108,11 @@ func fillTree(path string, parent *dirtree) *dirtree {
 	var children []*dirtree
 	current.name = path
 	current.parent = parent
-	current.path = parent.path + "/" + path
+	if parent.path == "" {
+		current.path = parent.name + "/" + path
+	} else {
+		current.path = parent.path + "/" + path
+	}
 //	fmt.Println("current path:", current.path)
 
 	fileinfo, err := os.Stat(current.path)
@@ -132,11 +136,13 @@ func fillTree(path string, parent *dirtree) *dirtree {
 
 func runFillTree(root string) {
 	var rootDir dirtree
-	rootDir.path = root
+	rootDir.path = ""
 	rootDir.name = root
-	var children []*dirtree
-	rootDir.children = children
-	dir, err := ioutil.ReadDir(root)
+//	var children []*dirtree
+//	rootDir.children = children
+
+dir, err := ioutil.ReadDir(root)
+	fmt.Println(dir)
 	if err != nil {
 
 	}
@@ -149,6 +155,7 @@ func runFillTree(root string) {
 
 func printtree(tree *dirtree) {
 	fmt.Println(tree.name)
+	fmt.Println(tree.children)
 	if len(tree.children) != 0 {
 		for _, tree := range tree.children {
 			printtree(tree)

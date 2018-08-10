@@ -129,3 +129,4 @@ func collectEnvConfigs() {
 //todo organize logs
 //todo add Dockerfile
 //todo add tests
+//todo add func for parsing absolute and relative repo paths
