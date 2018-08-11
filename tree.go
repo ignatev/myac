@@ -109,7 +109,7 @@ func fillTree(path string, parent *dirtree) *dirtree {
 	current.name = path
 	current.parent = parent
 	if parent.path == "" {
-		current.path = parent.name + "/" + path
+		current.path = path
 	} else {
 		current.path = parent.path + "/" + path
 	}
@@ -136,26 +136,17 @@ func fillTree(path string, parent *dirtree) *dirtree {
 
 func runFillTree(root string) {
 	var rootDir dirtree
-	rootDir.path = ""
-	rootDir.name = root
-//	var children []*dirtree
-//	rootDir.children = children
-
-dir, err := ioutil.ReadDir(root)
-	fmt.Println(dir)
-	if err != nil {
-
+	tree := fillTree(root, &rootDir)
+	t := renderTree(tree)
+	for _, tr := range t {
+		fmt.Println(tr)
 	}
-	for _, d := range dir {
-		fillTree(d.Name(), &rootDir)
-	}
-	printtree(&rootDir)
 
 }
 
 func printtree(tree *dirtree) {
 	fmt.Println(tree.name)
-	fmt.Println(tree.children)
+	fmt.Println(tree.path)
 	if len(tree.children) != 0 {
 		for _, tree := range tree.children {
 			printtree(tree)
@@ -167,33 +158,29 @@ func renderTree(tree *dirtree) []string {
 	var result []string
 	result = append(result, tree.name)
 	for i, child := range tree.children {
-//		result = append(result, renderTree(child)...)
-		if i == len(tree.children)-1 {
-			result = append(result, lastsubtree(child)...)
+		subtr := renderTree(child)
+		if i == len(tree.children) - 1 {
+			result = append(result, lastsubtree(result, subtr)...)
 		} else {
-			result = append(result, subtree(child)...)
+			result = append(result, subtree(result, subtr)...)
 		}
 	}
-	for _, p := range result {
-		fmt.Println(p)
+
+	return result
+}
+
+func subtree(result, subtr []string) []string {
+	result = append(result, middleItem + subtr[0])
+	for _, child := range subtr {
+		result = append(result, continueItem + child)
 	}
 	return result
 }
 
-func subtree(subtree *dirtree) []string {
-	var result []string
-	result = append(result, middleItem+subtree.name)
-	for _, child := range subtree.children {
-		result = append(result, continueItem+child.name)
-	}
-	return result
-}
-
-func lastsubtree(subtree *dirtree) []string {
-	var result []string
-	result = append(result, lastItem+subtree.name)
-	for _, child := range subtree.children {
-		result = append(result, emptySpace+child.name)
+func lastsubtree(result, subtr []string) []string {
+	result = append(result, lastItem + subtr[0])
+	for _, child := range subtr {
+		result = append(result, emptySpace + child)
 	}
 	return result
 }
