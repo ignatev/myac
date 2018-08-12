@@ -88,9 +88,8 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
-	//buildTree(localRepositoryPath)
 
-	runFillTree(localRepositoryPath)
+	runbuildtree(localRepositoryPath)
 	printServerStatus(port, createSliceWithPaths(repo))
 	runServer(port, createSliceWithPaths(repo))
 }
@@ -120,7 +119,7 @@ func printServerStatus(port string, configs map[string][]string) {
 	fmt.Println("Service running on port", port)
 }
 
-//
+
 func collectEnvConfigs() {
 
 }
@@ -130,3 +129,4 @@ func collectEnvConfigs() {
 //todo add Dockerfile
 //todo add tests
 //todo add func for parsing absolute and relative repo paths
+//todo add logging for clients (client connected from <address>, client request: URL, file)
