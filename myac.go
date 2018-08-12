@@ -44,10 +44,11 @@ func serveConfigFile(w http.ResponseWriter, r *http.Request, p string) {
 }
 
 func runServer(port string, configs map[string][]string) {
+	log.Println(configs)
 	err := http.ListenAndServe(port, &configHandler{configs})
 	log.Println("Listening...")
 	if err != nil {
-		log.Fatal(err)
+		log.Println(err)
 	}
 }
 
@@ -88,9 +89,9 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
+	printServerStatus(port)
 
 	runbuildtree(repopath)
-	printServerStatus(port, createSliceWithPaths(repo))
 	runServer(port, createSliceWithPaths(repo))
 }
 
@@ -115,7 +116,14 @@ func createSliceWithPaths(paths []string) map[string][]string {
 	return m
 }
 
-func printServerStatus(port string, configs map[string][]string) {
+func printServerStatus(port string) {
+	fmt.Println(`
+ ._ _        _.   _
+ | | |  \/  (_|  (_
+        /
+`)
+	fmt.Println("Configuration server")
+	fmt.Println("")
 	fmt.Println("Service running on port", port)
 }
 

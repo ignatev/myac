@@ -20,11 +20,11 @@ type tree struct {
 	path, name string
 	children   []*tree
 	parent     *tree
-	fileinfo	os.FileInfo
+	fileinfo   os.FileInfo
 	//todo add fileinfo for paths and isDir() func
 }
 
-func buildtree(path string, parent *tree) *tree {	//todo use fileinfo
+func buildtree(path string, parent *tree) *tree { //todo use fileinfo
 	var current tree
 	var children []*tree
 	current.name = path
@@ -64,7 +64,7 @@ func rendertree(tree *tree) []string {
 
 	for i, child := range tree.children {
 		subtr := rendertree(child)
-		if i == len(tree.children) - 1 {
+		if i == len(tree.children)-1 {
 			result = lastsubtree(result, subtr)
 		} else {
 			result = subtree(result, subtr)
@@ -75,18 +75,18 @@ func rendertree(tree *tree) []string {
 }
 
 func subtree(result, subtr []string) []string {
-	result = append(result, middleitem + subtr[0])
+	result = append(result, middleitem+subtr[0])
 	for _, child := range subtr[1:] {
-		result = append(result, continueitem + child)
+		result = append(result, continueitem+child)
 	}
 
 	return result
 }
 
 func lastsubtree(result, subtr []string) []string {
-	result = append(result, lastitem + subtr[0])
+	result = append(result, lastitem+subtr[0])
 	for _, child := range subtr[1:] {
-		result = append(result, emptyspace + child)
+		result = append(result, emptyspace+child)
 	}
 
 	return result
