@@ -113,7 +113,7 @@ func fillTree(path string, parent *dirtree) *dirtree {
 	} else {
 		current.path = parent.path + "/" + path
 	}
-//	fmt.Println("current path:", current.path)
+	//	fmt.Println("current path:", current.path)
 
 	fileinfo, err := os.Stat(current.path)
 	if err != nil {
@@ -121,15 +121,15 @@ func fillTree(path string, parent *dirtree) *dirtree {
 	}
 	if fileinfo.IsDir() && fileinfo.Name() != ".git" {
 
-	dir, err := ioutil.ReadDir(current.path)
-	if err != nil {
-//		fmt.Println(err)
-	}
-	for _, file := range dir {
-		child := fillTree(file.Name(), &current)
-		children = append(children, child)
-	}
-	current.children = children
+		dir, err := ioutil.ReadDir(current.path)
+		if err != nil {
+			//		fmt.Println(err)
+		}
+		for _, file := range dir {
+			child := fillTree(file.Name(), &current)
+			children = append(children, child)
+		}
+		current.children = children
 	}
 	return &current
 }
@@ -137,11 +137,10 @@ func fillTree(path string, parent *dirtree) *dirtree {
 func runFillTree(root string) {
 	var rootDir dirtree
 	tree := fillTree(root, &rootDir)
-	t := renderTree(tree)
-	for _, tr := range t {
-		fmt.Println(tr)
+	//	fmt.Println("run", tree, root)
+	for _, d := range renderTree(tree) {
+		fmt.Println(d)
 	}
-
 }
 
 func printtree(tree *dirtree) {
@@ -157,30 +156,45 @@ func printtree(tree *dirtree) {
 func renderTree(tree *dirtree) []string {
 	var result []string
 	result = append(result, tree.name)
-	for i, child := range tree.children {
-		subtr := renderTree(child)
-		if i == len(tree.children) - 1 {
-			result = append(result, lastsubtree(result, subtr)...)
-		} else {
-			result = append(result, subtree(result, subtr)...)
-		}
-	}
 
+	fmt.Println("000", result)
+		for i, child := range tree.children {
+			fmt.Println(result)
+			subtr := renderTree(child)
+			fmt.Println(subtr)
+			fmt.Println(result)
+			if i == len(tree.children)-1 {
+				result = lastsubtree(result, subtr)
+			} else {
+				result = subtree(result, subtr)
+			}
+		}
+	fmt.Println("999", result)
 	return result
 }
 
 func subtree(result, subtr []string) []string {
-	result = append(result, middleItem + subtr[0])
-	for _, child := range subtr {
-		result = append(result, continueItem + child)
+	fmt.Println("1", result, subtr)
+	result = append(result, middleItem+subtr[0])
+	fmt.Println("2", result, subtr)
+
+	for _, child := range subtr[1:] {
+		fmt.Println("3", result)
+		fmt.Println("4", child)
+		result = append(result, continueItem+child)
+		fmt.Println("5", result)
 	}
+
+	fmt.Println("6", result)
 	return result
 }
 
 func lastsubtree(result, subtr []string) []string {
-	result = append(result, lastItem + subtr[0])
-	for _, child := range subtr {
-		result = append(result, emptySpace + child)
+	fmt.Println("1-1", result, subtr)
+	result = append(result, lastItem+subtr[0])
+	fmt.Println("1-2", result, subtr)
+	for _, child := range subtr[1:] {
+		result = append(result, emptySpace+child)
 	}
 	return result
 }
