@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 const (
@@ -19,6 +20,7 @@ type tree struct {
 	path, name string
 	children   []*tree
 	parent     *tree
+	fileinfo	os.FileInfo
 	//todo add fileinfo for paths and isDir() func
 }
 
@@ -27,12 +29,7 @@ func buildtree(path string, parent *tree) *tree {	//todo use fileinfo
 	var children []*tree
 	current.name = path
 	current.parent = parent
-	if parent.path == "" {							//
-		current.path = path							//
-	} else {										//todo remove this block, use abs / rel path func
-		current.path = parent.path + "/" + path		//
-	}												//
-
+	current.path = parent.path + "/" + current.name
 	fileinfo, err := os.Stat(current.path)
 	if err != nil {
 		log.Println(err)
@@ -51,9 +48,11 @@ func buildtree(path string, parent *tree) *tree {	//todo use fileinfo
 	return &current
 }
 
-func runbuildtree(root string) {
+func runbuildtree(path string) {
 	var rootDir tree
-	tree := buildtree(root, &rootDir)
+	rootDir.path = filepath.Dir(path)
+
+	tree := buildtree(filepath.Base(path), &rootDir)
 	for _, d := range rendertree(tree) {
 		fmt.Println(d)
 	}

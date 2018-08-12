@@ -65,8 +65,8 @@ func (c *serverConf) getConf(configPath string) *serverConf {
 	return c
 }
 
-func cloneConfigRepo(localRepositoryPath, url string) {
-	_, err := git.PlainClone(localRepositoryPath, false, &git.CloneOptions{
+func cloneConfigRepo(repopath, url string) {
+	_, err := git.PlainClone(repopath, false, &git.CloneOptions{
 		URL:      url,
 		Progress: os.Stdout,
 	})
@@ -81,15 +81,15 @@ func main() {
 	var c serverConf
 	config := c.getConf(*configPath)
 	url := config.Server.Git.URL
-	localRepositoryPath := config.Server.Git.LocalRepositoryPath
+	repopath := config.Server.Git.LocalRepositoryPath
 	port := ":" + strconv.Itoa(config.Server.Port)
-	cloneConfigRepo(localRepositoryPath, url)
-	repo, err := listRepo(localRepositoryPath)
+	cloneConfigRepo(repopath, url)
+	repo, err := listRepo(repopath)
 	if err != nil {
 		log.Println(err)
 	}
 
-	runbuildtree(localRepositoryPath)
+	runbuildtree(repopath)
 	printServerStatus(port, createSliceWithPaths(repo))
 	runServer(port, createSliceWithPaths(repo))
 }
@@ -119,6 +119,10 @@ func printServerStatus(port string, configs map[string][]string) {
 	fmt.Println("Service running on port", port)
 }
 
+func configurationpath(path string) []string {
+	segments := strings.Split(path, "/")
+	return []string{segments[len(segments)-1]}
+}
 
 func collectEnvConfigs() {
 
