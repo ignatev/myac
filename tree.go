@@ -17,14 +17,13 @@ const (
 )
 
 type tree struct {
-	path, name string
-	children   []*tree
-	parent     *tree
-	fileinfo   os.FileInfo
-	//todo add fileinfo for paths and isDir() func
+	url, path, name string
+	children        []*tree
+	parent          *tree
+	mapping         map[string]string
 }
 
-func buildtree(path string, parent *tree) *tree { //todo use fileinfo
+func buildtree(path string, parent *tree) *tree {
 	var current tree
 	var children []*tree
 	current.name = path
@@ -45,6 +44,9 @@ func buildtree(path string, parent *tree) *tree { //todo use fileinfo
 		}
 		current.children = children
 	}
+	if !fileinfo.IsDir() {
+		current.url = parent.name
+	}
 	return &current
 }
 
@@ -60,7 +62,11 @@ func runbuildtree(path string) {
 
 func rendertree(tree *tree) []string {
 	var result []string
-	result = append(result, tree.name)
+	var mapping string
+	if tree.url != "" {
+		mapping = " >>> " + "http://localhost:8888/" + tree.url
+	}
+	result = append(result, tree.name+mapping)
 
 	for i, child := range tree.children {
 		subtr := rendertree(child)

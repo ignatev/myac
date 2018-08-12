@@ -33,6 +33,7 @@ type configHandler struct {
 
 func (ch *configHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p := strings.TrimLeft(r.URL.Path, "/")
+	log.Println(p)
 	c := ch.configs
 	if val, ok := c[p]; ok {
 		serveConfigFile(w, r, val[0])
@@ -44,7 +45,6 @@ func serveConfigFile(w http.ResponseWriter, r *http.Request, p string) {
 }
 
 func runServer(port string, configs map[string][]string) {
-	log.Println(configs)
 	err := http.ListenAndServe(port, &configHandler{configs})
 	log.Println("Listening...")
 	if err != nil {
