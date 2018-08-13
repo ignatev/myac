@@ -30,7 +30,7 @@ func buildtree(path string, parent *tree) *tree {
 	current.parent = parent
 	current.path = parent.path + "/" + current.name
 	current.mapping = parent.mapping
-	//fmt.Println(parent.mapping)
+
 	fileinfo, err := os.Stat(current.path)
 	if err != nil {
 		log.Println(err)
@@ -48,28 +48,23 @@ func buildtree(path string, parent *tree) *tree {
 	}
 	if !fileinfo.IsDir() {
 		current.url = parent.name
-		fmt.Println(parent.mapping)
-		c := (*current.mapping)[parent.name]
-		c = append(c, current.path)
-		fmt.Println((*current.mapping)[parent.name])
+		c := current.mapping
 
-//		fmt.Println(parent.name)
-//		fmt.Println(current.name)
-//		fmt.Println(current.path)
+		v := (*c)[parent.name]
+		v = append(v, current.path)
+		(*c)[parent.name] = v
+
 	}
 	return &current
 }
 
-func runbuildtree(path string) {
+func treebuilder(path string) {
 	var rootDir tree
-	var mapping map[string][]string
-	fmt.Println(mapping)
+	m := make(map[string][]string)
 	rootDir.path = filepath.Dir(path)
-	rootDir.mapping = &mapping
-
+	rootDir.mapping = &m
 	tree := buildtree(filepath.Base(path), &rootDir)
 
-	fmt.Println(mapping["service-2"])
 	for _, d := range rendertree(tree) {
 		fmt.Println(d)
 	}

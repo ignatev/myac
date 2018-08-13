@@ -91,7 +91,7 @@ func main() {
 	}
 	printServerStatus(port)
 
-	runbuildtree(repopath)
+	treebuilder(repopath)
 	runServer(port, createSliceWithPaths(repo))
 }
 
@@ -120,8 +120,7 @@ func printServerStatus(port string) {
 	fmt.Println(`
  ._ _        _.   _
  | | |  \/  (_|  (_
-        /
-`)
+        /`)
 	fmt.Println("Configuration server")
 	fmt.Println("")
 	fmt.Println("Service running on port", port)
@@ -133,7 +132,6 @@ func configurationpath(path string) []string {
 }
 
 func collectEnvConfigs() {
-
 }
 
 //todo add method for mapping service:[multiple config files, e.g. dev, prod, test]
