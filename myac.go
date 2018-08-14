@@ -28,15 +28,15 @@ type serverConf struct {
 }
 
 type configHandler struct {
-	configs map[string][]string
+	configs *map[string]string
 }
 
 func (ch *configHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p := strings.TrimLeft(r.URL.Path, "/")
 	log.Println(p)
 	c := ch.configs
-	if val, ok := c[p]; ok {
-		serveConfigFile(w, r, val[0])
+	if val, ok := (*c)[p]; ok {
+		serveConfigFile(w, r, val)
 	}
 }
 
@@ -44,7 +44,7 @@ func serveConfigFile(w http.ResponseWriter, r *http.Request, p string) {
 	http.ServeFile(w, r, p)
 }
 
-func runServer(port string, configs map[string][]string) {
+func runServer(port string, configs *map[string]string) {
 	err := http.ListenAndServe(port, &configHandler{configs})
 	log.Println("Listening...")
 	if err != nil {
@@ -85,14 +85,11 @@ func main() {
 	repopath := config.Server.Git.LocalRepositoryPath
 	port := ":" + strconv.Itoa(config.Server.Port)
 	cloneConfigRepo(repopath, url)
-	repo, err := listRepo(repopath)
-	if err != nil {
-		log.Println(err)
-	}
+
 	printServerStatus(port)
 
-	treebuilder(repopath)
-	runServer(port, createSliceWithPaths(repo))
+	tree := treebuilder(repopath)
+	runServer(port, tree.finalmapping)
 }
 
 func listRepo(root string) ([]string, error) {

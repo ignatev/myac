@@ -24,6 +24,7 @@ type tree struct {
 	parent          	*tree
 	mapping         	*map[string][]string
 	isfile				bool
+	finalmapping		*map[string]string
 }
 
 func buildtree(path string, parent *tree) *tree {
@@ -34,6 +35,7 @@ func buildtree(path string, parent *tree) *tree {
 	current.relpath = parent.relpath + "/" + current.name
 	current.abspath = parent.abspath + "/" + current.name
 	current.mapping = parent.mapping
+	current.finalmapping = parent.finalmapping
 
 	fileinfo, err := os.Stat(current.abspath)
 	if err != nil {
@@ -63,17 +65,21 @@ func buildtree(path string, parent *tree) *tree {
 	return &current
 }
 
-func treebuilder(path string) {
+func treebuilder(path string) tree {
 	var rootDir tree
 	m := make(map[string][]string)
+	f := make(map[string]string)
 	rootDir.relpath = ""
 	rootDir.abspath = filepath.Dir(path)
 	rootDir.mapping = &m
+	rootDir.finalmapping = &f
 
-	tree := buildtree(filepath.Base(path), &rootDir)
-	for _, d := range rendertree(tree) {
+	result := buildtree(filepath.Base(path), &rootDir)
+	for _, d := range rendertree(result) {
 		fmt.Println(d)
 	}
+
+	return rootDir
 }
 
 func rendertree(tree *tree) []string {
@@ -87,7 +93,10 @@ func rendertree(tree *tree) []string {
 		} else {
 			tree.url = prefix + "/" + strings.TrimSuffix(tree.name, filepath.Ext(tree.name))
 		}
-		mapping = " >>> " + "http://localhost:8888" + tree.url
+		tree.url = strings.TrimLeft(tree.url, "/")
+		mapping = " >>> " + "http://localhost:8888/" + tree.url
+		f := tree.finalmapping
+		(*f)[tree.url] = tree.abspath
 	}
 
 	result = append(result, tree.name+mapping)
