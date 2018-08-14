@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const (
@@ -17,10 +18,12 @@ const (
 )
 
 type tree struct {
-	url, path, name string
-	children        []*tree
-	parent          *tree
-	mapping         *map[string][]string
+	url, name			string
+	relpath, abspath	string
+	children        	[]*tree
+	parent          	*tree
+	mapping         	*map[string][]string
+	isfile				bool
 }
 
 func buildtree(path string, parent *tree) *tree {
@@ -28,15 +31,16 @@ func buildtree(path string, parent *tree) *tree {
 	var children []*tree
 	current.name = path
 	current.parent = parent
-	current.path = parent.path + "/" + current.name
+	current.relpath = parent.relpath + "/" + current.name
+	current.abspath = parent.abspath + "/" + current.name
 	current.mapping = parent.mapping
 
-	fileinfo, err := os.Stat(current.path)
+	fileinfo, err := os.Stat(current.abspath)
 	if err != nil {
 		log.Println(err)
 	}
 	if fileinfo.IsDir() && fileinfo.Name() != ".git" {
-		dir, err := ioutil.ReadDir(current.path)
+		dir, err := ioutil.ReadDir(current.abspath)
 		if err != nil {
 			log.Println(err)
 		}
@@ -48,23 +52,25 @@ func buildtree(path string, parent *tree) *tree {
 	}
 	if !fileinfo.IsDir() {
 		current.url = parent.name
+		current.isfile = true
 		c := current.mapping
 
 		v := (*c)[parent.name]
-		v = append(v, current.path)
+		v = append(v, current.abspath)
 		(*c)[parent.name] = v
-
 	}
+
 	return &current
 }
 
 func treebuilder(path string) {
 	var rootDir tree
 	m := make(map[string][]string)
-	rootDir.path = filepath.Dir(path)
+	rootDir.relpath = ""
+	rootDir.abspath = filepath.Dir(path)
 	rootDir.mapping = &m
-	tree := buildtree(filepath.Base(path), &rootDir)
 
+	tree := buildtree(filepath.Base(path), &rootDir)
 	for _, d := range rendertree(tree) {
 		fmt.Println(d)
 	}
@@ -73,9 +79,17 @@ func treebuilder(path string) {
 func rendertree(tree *tree) []string {
 	var result []string
 	var mapping string
-	if tree.url != "" {
-		mapping = " >>> " + "http://localhost:8888/" + tree.url
+	if tree.isfile {
+		m := (*tree.mapping)[tree.parent.name]
+		prefix := tree.parent.relpath
+		if len(m) == 1 {
+			tree.url = prefix
+		} else {
+			tree.url = prefix + "/" + strings.TrimSuffix(tree.name, filepath.Ext(tree.name))
+		}
+		mapping = " >>> " + "http://localhost:8888" + tree.url
 	}
+
 	result = append(result, tree.name+mapping)
 
 	for i, child := range tree.children {
