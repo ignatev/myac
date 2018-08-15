@@ -7,7 +7,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 
@@ -34,6 +33,7 @@ type configHandler struct {
 func (ch *configHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	p := strings.TrimLeft(r.URL.Path, "/")
 	log.Println(p)
+	log.Println(r.RemoteAddr)
 	c := ch.configs
 	if val, ok := (*c)[p]; ok {
 		serveConfigFile(w, r, val)
@@ -92,27 +92,6 @@ func main() {
 	runServer(port, tree.finalmapping)
 }
 
-func listRepo(root string) ([]string, error) {
-	var files []string
-	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-		if !info.IsDir() && !strings.HasPrefix(path, root+"/.git") && path != root {
-			files = append(files, path)
-		}
-		return nil
-	})
-	return files, err
-}
-
-func createSliceWithPaths(paths []string) map[string][]string {
-	m := make(map[string][]string)
-	for _, p := range paths {
-		segs := strings.Split(p, "/")
-		k := segs[len(segs)-2]
-		m[k] = append(m[k], p)
-	}
-	return m
-}
-
 func printServerStatus(port string) {
 	fmt.Println(`
  ._ _        _.   _
@@ -123,13 +102,6 @@ func printServerStatus(port string) {
 	fmt.Println("Service running on port", port)
 }
 
-func configurationpath(path string) []string {
-	segments := strings.Split(path, "/")
-	return []string{segments[len(segments)-1]}
-}
-
-func collectEnvConfigs() {
-}
 
 //todo add method for mapping service:[multiple config files, e.g. dev, prod, test]
 //todo organize logs
