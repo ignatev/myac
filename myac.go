@@ -109,11 +109,12 @@ err = decoder.Decode(&configuration)
 if err != nil {  return err }
 and from the environment variables
 configuration.Connection_String = os.Getenv("Connection_String") */
-	configPath := flag.String("config", "config.yml", "path to service config")
+/* 	configPath := flag.String("config", "config.yml", "path to service config")
 	flag.Parse()
 	config := c.getConf(*configPath) {
 
-	}
+	} */
+	return nil
 }
 
 
