@@ -84,10 +84,9 @@ func main() {
 	url := config.Server.Git.URL
 	repopath := config.Server.Git.LocalRepositoryPath
 	port := ":" + strconv.Itoa(config.Server.Port)
+
 	cloneConfigRepo(repopath, url)
-
 	printServerStatus(port)
-
 	tree := treebuilder(repopath)
 	runServer(port, tree.finalmapping)
 }
@@ -99,7 +98,7 @@ func printServerStatus(port string) {
         /`)
 	fmt.Println("Configuration server")
 	fmt.Println("")
-	fmt.Println("Service running on port", port)
+	fmt.Println("Service running on port", port[1:])
 }
 
 
