@@ -18,3 +18,6 @@ func TestConf(t *testing.T) {
 		}
 	})
 }
+
+
+//use cmp.Equals and cmp.Diff for tests
