@@ -52,20 +52,6 @@ func runServer(port string, configs *map[string]string) {
 	}
 }
 
-func (c *serverConf) getConf(configPath string) *serverConf {
-	yamlFile, err := ioutil.ReadFile(configPath)
-	if err != nil {
-		log.Printf("yamlFile.Get err #%v ", err)
-	}
-
-	err = yaml.Unmarshal(yamlFile, &c)
-	if err != nil {
-		log.Fatalf("Unmarshal: %v", err)
-	}
-
-	return c
-}
-
 func cloneConfigRepo(repopath, url string) {
 	_, err := git.PlainClone(repopath, false, &git.CloneOptions{
 		URL:      url,
@@ -99,6 +85,36 @@ func printServerStatus(port string) {
 	fmt.Println("Configuration server")
 	fmt.Println("")
 	fmt.Println("Service running on port", port[1:])
+}
+
+func (c *serverConf) getConf(configPath string) *serverConf {
+	yamlFile, err := ioutil.ReadFile(configPath)
+	if err != nil {
+		log.Printf("yamlFile.Get err #%v ", err)
+	}
+
+	err = yaml.Unmarshal(yamlFile, &c)
+	if err != nil {
+		log.Fatalf("Unmarshal: %v", err)
+	}
+
+	return c
+}
+
+func environmentConfig(configpath string) error {
+/* 	//filename is the path to the json config file
+file, err := os.Open(filename) if err != nil {  return err }
+decoder := json.NewDecoder(file)
+err = decoder.Decode(&configuration)
+if err != nil {  return err }
+and from the environment variables
+configuration.Connection_String = os.Getenv("Connection_String") */
+/* 	configPath := flag.String("config", "config.yml", "path to service config")
+	flag.Parse()
+	config := c.getConf(*configPath) {
+
+	} */
+	return nil
 }
 
 
