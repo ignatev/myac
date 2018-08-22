@@ -18,13 +18,13 @@ const (
 )
 
 type tree struct {
-	url, name			string
-	relpath, abspath	string
-	children        	[]*tree
-	parent          	*tree
-	mapping         	*map[string][]string
-	isfile				bool
-	finalmapping		*map[string]string
+	url, name        string
+	relpath, abspath string
+	children         []*tree
+	parent           *tree
+	mapping          *map[string][]string
+	isfile           bool
+	finalmapping     *map[string]string
 }
 
 func buildtree(path string, parent *tree) *tree {

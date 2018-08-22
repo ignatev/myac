@@ -101,7 +101,6 @@ func printServerStatus(port string) {
 	fmt.Println("Service running on port", port[1:])
 }
 
-
 //todo add method for mapping service:[multiple config files, e.g. dev, prod, test]
 //todo organize logs
 //todo add Dockerfile
