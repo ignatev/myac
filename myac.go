@@ -87,7 +87,7 @@ func main() {
 
 	cloneConfigRepo(repopath, url)
 	printServerStatus(port)
-	tree := treebuilder(repopath)
+	tree := treebuilder(repopath, port)
 	runServer(port, tree.finalmapping)
 }
 

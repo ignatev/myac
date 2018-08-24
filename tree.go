@@ -65,7 +65,7 @@ func buildtree(path string, parent *tree) *tree {
 	return &current
 }
 
-func treebuilder(path string) tree {
+func treebuilder(path, port string) tree {
 	var rootDir tree
 	m := make(map[string][]string)
 	f := make(map[string]string)
@@ -75,14 +75,14 @@ func treebuilder(path string) tree {
 	rootDir.finalmapping = &f
 
 	result := buildtree(filepath.Base(path), &rootDir)
-	for _, d := range rendertree(result) {
+	for _, d := range rendertree(port, result) {
 		fmt.Println(d)
 	}
 
 	return rootDir
 }
 
-func rendertree(tree *tree) []string {
+func rendertree(port string, tree *tree) []string {
 	var result []string
 	var mapping string
 	if tree.isfile {
@@ -94,7 +94,7 @@ func rendertree(tree *tree) []string {
 			tree.url = prefix + "/" + strings.TrimSuffix(tree.name, filepath.Ext(tree.name))
 		}
 		tree.url = strings.TrimLeft(tree.url, "/")
-		mapping = " >>> " + "http://localhost:8888/" + tree.url
+		mapping = " >>> " + "http://localhost" + port + "/" + tree.url
 		f := tree.finalmapping
 		(*f)[tree.url] = tree.abspath
 	}
@@ -102,7 +102,7 @@ func rendertree(tree *tree) []string {
 	result = append(result, tree.name+mapping)
 
 	for i, child := range tree.children {
-		subtr := rendertree(child)
+		subtr := rendertree(port, child)
 		if i == len(tree.children)-1 {
 			result = lastsubtree(result, subtr)
 		} else {
