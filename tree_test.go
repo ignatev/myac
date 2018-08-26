@@ -22,6 +22,12 @@ func TestTree(t *testing.T) {
 		}
 	}
 
+	t.Run("two dirs with files", func(t *testing.T){
+		got := "path-to-dir"
+		want := "path-to-dir"
+		assertCorrectDirStructure(t, got, want)
+	})
+
 	t.Run("one dir with one file", func(t *testing.T) {
 		got := "service-1\n└── generic-service.yml"
 		want := "service-1\n└── generic-service.yml"
