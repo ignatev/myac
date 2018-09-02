@@ -22,7 +22,7 @@ func TestTree(t *testing.T) {
 		}
 	}
 
-	t.Run("two dirs with files", func(t *testing.T){
+	t.Run("two dirs with files", func(t *testing.T) {
 		got := "path-to-dir"
 		want := "path-to-dir"
 		assertCorrectDirStructure(t, got, want)
