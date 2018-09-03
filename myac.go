@@ -103,7 +103,6 @@ func printServerStatus(port string) {
 
 //todo add method for mapping service:[multiple config files, e.g. dev, prod, test]
 //todo organize logs
-//todo add Dockerfile
 //todo add tests
 //todo add func for parsing absolute and relative repo paths
 //todo add logging for clients (client connected from <address>, client request: URL, file)
