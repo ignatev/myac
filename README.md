@@ -12,12 +12,26 @@ Myac is a configuration server inspired by Spring Cloud Config.
 Example git repo with configuration to serve:
 
 ```bash
+2018/09/11 00:04:33 repository already exists
 
-repo
+ ._ _        _.   _
+ | | |  \/  (_|  (_
+        /
+Configuration server
+
+Service running on port 8888
+.filesystem-repo
+├── .git
+├── LICENSE >>> http://localhost:8888/.filesystem-repo
 ├── service-1
-│   └── generic-service.yml
+│   ├── generic-service.yml >>> http://localhost:8888/.filesystem-repo/service-1
+│   └── service-1-2
+│       ├── servcie-1-2-conf >>> http://localhost:8888/.filesystem-repo/service-1/service-1-2
+│       └── service-1-3
+│           └── service-1-3-conf >>> http://localhost:8888/.filesystem-repo/service-1/service-1-2/service-1-3
 └── service-2
-    └── generic-service.yml
+    ├── generic-service-dev.yml >>> http://localhost:8888/.filesystem-repo/service-2/generic-service-dev
+    └── generic-service.yml >>> http://localhost:8888/.filesystem-repo/service-2/generic-service
 
 ```
 
